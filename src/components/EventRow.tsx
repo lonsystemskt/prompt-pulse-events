@@ -123,11 +123,6 @@ export const EventRow: React.FC<EventRowProps> = ({
               ref={setContainerRef}
               onScroll={(e) => setScrollPosition(e.currentTarget.scrollLeft)}
               className="flex gap-3 overflow-x-auto scrollbar-hide px-6"
-              style={{ 
-                scrollbarWidth: 'none', 
-                msOverflowStyle: 'none',
-                WebkitScrollbar: { display: 'none' }
-              }}
             >
               {activeDemands.length === 0 ? (
                 <div className="text-slate-400 text-center py-4 flex-1 text-sm bg-slate-700/30 rounded-xl border border-slate-600/20 backdrop-blur-sm min-w-[200px]">
