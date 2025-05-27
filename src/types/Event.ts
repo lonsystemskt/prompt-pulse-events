@@ -20,4 +20,5 @@ export interface Event {
   created_at?: string;
   updated_at?: string;
   archived?: boolean;
+  deleteDemandId?: string; // Adicionando propriedade para flag de exclusão
 }

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -46,7 +45,7 @@ const Index = () => {
     }
   };
 
-  const handleUpdateEvent = async (eventId: string, updatedEvent: Partial<Event> & { deleteDemandId?: string }) => {
+  const handleUpdateEvent = async (eventId: string, updatedEvent: Partial<Event>) => {
     try {
       console.log('Index: Atualizando evento:', eventId, updatedEvent);
       
@@ -65,7 +64,7 @@ const Index = () => {
         }
         
         console.log('Index: Demanda deletada com sucesso');
-        return; // Não precisamos continuar, o realtime vai atualizar
+        return; // Realtime vai atualizar automaticamente
       }
       
       // Se há demandas para processar
@@ -82,7 +81,7 @@ const Index = () => {
               title: demand.title,
               subject: demand.subject,
               date: demand.date,
-              urgency: 'Média', // Sempre usar 'Média' como urgência padrão
+              urgency: 'Média',
               completed: false,
               completed_at: null
             };
@@ -154,7 +153,6 @@ const Index = () => {
       
     } catch (error) {
       console.error('Index: Erro completo ao atualizar evento:', error);
-      // Não relançar o erro para evitar travamentos na UI
     }
   };
 

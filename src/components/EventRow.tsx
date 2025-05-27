@@ -99,11 +99,9 @@ export const EventRow: React.FC<EventRowProps> = ({
       const updatedDemands = event.demands.filter(demand => demand.id !== demandId);
       onUpdateEvent(event.id, { demands: updatedDemands });
     } else {
-      // Se é uma demanda real no banco, vamos marcá-la para exclusão
-      const updatedDemands = event.demands.filter(demand => demand.id !== demandId);
+      // Se é uma demanda real no banco, marcar para exclusão usando a nova propriedade
       onUpdateEvent(event.id, { 
-        demands: updatedDemands,
-        deleteDemandId: demandId // Flag para indicar que uma demanda deve ser deletada
+        deleteDemandId: demandId
       });
     }
   };
