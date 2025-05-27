@@ -120,9 +120,9 @@ export const useRealtimeEvents = () => {
               setEvents(prev => prev.filter(e => e.id !== deletedId));
               setArchivedEvents(prev => prev.filter(e => e.id !== deletedId));
             }
-          } else if (payload.new?.id) {
+          } else if (payload.new && typeof payload.new === 'object' && 'id' in payload.new) {
             // Atualizar apenas o evento específico que mudou
-            updateSingleEvent(payload.new.id);
+            updateSingleEvent(payload.new.id as string);
           }
         }
       )
@@ -137,7 +137,13 @@ export const useRealtimeEvents = () => {
         (payload) => {
           console.log('Mudança detectada na tabela demands:', payload);
           
-          const eventId = payload.new?.event_id || payload.old?.event_id;
+          // Verificar se existe event_id no payload.new ou payload.old
+          const eventId = (payload.new && typeof payload.new === 'object' && 'event_id' in payload.new) 
+            ? payload.new.event_id as string
+            : (payload.old && typeof payload.old === 'object' && 'event_id' in payload.old)
+            ? payload.old.event_id as string
+            : null;
+            
           if (eventId) {
             // Atualizar apenas o evento que contém a demanda que mudou
             updateSingleEvent(eventId);
