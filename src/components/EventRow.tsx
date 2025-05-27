@@ -94,8 +94,18 @@ export const EventRow: React.FC<EventRowProps> = ({
   const handleDeleteDemand = (demandId: string) => {
     console.log('EventRow: Deletando demanda', demandId);
     
-    const updatedDemands = event.demands.filter(demand => demand.id !== demandId);
-    onUpdateEvent(event.id, { demands: updatedDemands });
+    // Se é uma demanda temporária (não está no banco), remover apenas localmente
+    if (demandId.startsWith('temp-')) {
+      const updatedDemands = event.demands.filter(demand => demand.id !== demandId);
+      onUpdateEvent(event.id, { demands: updatedDemands });
+    } else {
+      // Se é uma demanda real no banco, vamos marcá-la para exclusão
+      const updatedDemands = event.demands.filter(demand => demand.id !== demandId);
+      onUpdateEvent(event.id, { 
+        demands: updatedDemands,
+        deleteDemandId: demandId // Flag para indicar que uma demanda deve ser deletada
+      });
+    }
   };
 
   return (

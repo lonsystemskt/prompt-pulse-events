@@ -12,25 +12,35 @@ import { supabase } from '@/integrations/supabase/client';
 
 const ArchivedEvents = () => {
   const navigate = useNavigate();
-  const { archivedEvents, loading } = useRealtimeEvents();
+  const { archivedEvents, loading, loadArchivedEvents } = useRealtimeEvents();
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   useEffect(() => {
+    // Carregar eventos arquivados quando a página abrir
+    loadArchivedEvents();
+    
     const timer = setInterval(() => {
       setCurrentDateTime(new Date());
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [loadArchivedEvents]);
 
   const handleRestore = async (eventId: string) => {
     try {
+      console.log('Restaurando evento:', eventId);
+      
       const { error } = await supabase
         .from('events')
         .update({ archived: false })
         .eq('id', eventId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao restaurar evento:', error);
+        throw error;
+      }
+      
+      console.log('Evento restaurado com sucesso');
       // O realtime irá atualizar automaticamente
     } catch (error) {
       console.error('Erro ao restaurar evento:', error);
@@ -39,11 +49,18 @@ const ArchivedEvents = () => {
 
   const handleDelete = async (eventId: string) => {
     try {
+      console.log('Deletando evento permanentemente:', eventId);
+      
       // Primeiro deletar todas as demandas do evento
-      await supabase
+      const { error: demandsError } = await supabase
         .from('demands')
         .delete()
         .eq('event_id', eventId);
+
+      if (demandsError) {
+        console.error('Erro ao deletar demandas do evento:', demandsError);
+        throw demandsError;
+      }
 
       // Depois deletar o evento
       const { error } = await supabase
@@ -51,7 +68,12 @@ const ArchivedEvents = () => {
         .delete()
         .eq('id', eventId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao deletar evento:', error);
+        throw error;
+      }
+      
+      console.log('Evento deletado permanentemente com sucesso');
       // O realtime irá atualizar automaticamente
     } catch (error) {
       console.error('Erro ao deletar evento:', error);

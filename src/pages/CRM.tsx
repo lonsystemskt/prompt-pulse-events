@@ -133,7 +133,7 @@ const CRM = () => {
         </div>
 
         {/* Contacts List */}
-        <div className="space-y-4">
+        <div className="space-y-4 max-h-[calc(100vh-300px)] overflow-y-auto">
           {contacts.length === 0 ? (
             <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-12 text-center shadow-xl">
               <div className="text-slate-400 text-lg">
@@ -144,37 +144,37 @@ const CRM = () => {
             contacts.map((contact) => (
               <div
                 key={contact.id}
-                className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-4 shadow-2xl mb-4"
+                className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-4 shadow-2xl mb-4 max-w-full"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 w-full overflow-hidden">
                   {/* Contact Info */}
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-1 overflow-hidden">
                     <div className="flex items-center gap-4 mb-2">
-                      <h2 className="text-lg font-semibold text-white">{contact.name}</h2>
-                      <span className="text-cyan-300 text-sm px-2 py-1 bg-cyan-500/20 rounded border border-cyan-500/30">
+                      <h2 className="text-lg font-semibold text-white truncate max-w-[200px]">{contact.name}</h2>
+                      <span className="text-cyan-300 text-sm px-2 py-1 bg-cyan-500/20 rounded border border-cyan-500/30 whitespace-nowrap">
                         {contact.subject}
                       </span>
                     </div>
                     
-                    <div className="flex items-center gap-4 text-sm text-slate-300 mb-2">
-                      <div className="flex items-center gap-1">
-                        <Phone className="w-4 h-4 text-cyan-400" />
-                        {contact.whatsapp}
+                    <div className="flex items-center gap-4 text-sm text-slate-300 mb-2 flex-wrap">
+                      <div className="flex items-center gap-1 min-w-0">
+                        <Phone className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                        <span className="truncate max-w-[150px]">{contact.whatsapp}</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Mail className="w-4 h-4 text-cyan-400" />
-                        {contact.email}
+                      <div className="flex items-center gap-1 min-w-0">
+                        <Mail className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                        <span className="truncate max-w-[200px]">{contact.email}</span>
                       </div>
                     </div>
 
                     {contact.comments.length > 0 && (
-                      <div className="text-sm text-slate-400">
+                      <div className="text-sm text-slate-400 max-w-full">
                         <span className="font-medium text-cyan-300">Comentários:</span>
-                        <ul className="mt-1 space-y-1">
+                        <div className="mt-1 space-y-1 max-h-20 overflow-y-auto">
                           {contact.comments.map((comment, index) => (
-                            <li key={index} className="ml-2">• {comment}</li>
+                            <div key={index} className="ml-2 truncate">• {comment}</div>
                           ))}
-                        </ul>
+                        </div>
                       </div>
                     )}
                   </div>

@@ -45,10 +45,16 @@ export const DemandOverviewCard: React.FC<DemandOverviewCardProps> = ({
   };
 
   const handleComplete = () => {
+    console.log('DemandOverviewCard: Completando demanda', demand.id);
     onUpdateDemand(demand.id, {
       completed: true,
       completedAt: new Date().toISOString()
     });
+  };
+
+  const handleDelete = () => {
+    console.log('DemandOverviewCard: Excluindo demanda', demand.id);
+    onDeleteDemand(demand.id);
   };
 
   return (
@@ -101,7 +107,7 @@ export const DemandOverviewCard: React.FC<DemandOverviewCardProps> = ({
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() => onDeleteDemand(demand.id)}
+                onClick={handleDelete}
                 className="h-6 w-6 p-0 text-red-400 hover:text-red-300 hover:bg-slate-600/50"
               >
                 <Trash2 className="w-3 h-3" />

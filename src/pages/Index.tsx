@@ -46,9 +46,27 @@ const Index = () => {
     }
   };
 
-  const handleUpdateEvent = async (eventId: string, updatedEvent: Partial<Event>) => {
+  const handleUpdateEvent = async (eventId: string, updatedEvent: Partial<Event> & { deleteDemandId?: string }) => {
     try {
       console.log('Index: Atualizando evento:', eventId, updatedEvent);
+      
+      // Se há uma demanda para deletar
+      if (updatedEvent.deleteDemandId) {
+        console.log('Index: Deletando demanda:', updatedEvent.deleteDemandId);
+        
+        const { error } = await supabase
+          .from('demands')
+          .delete()
+          .eq('id', updatedEvent.deleteDemandId);
+        
+        if (error) {
+          console.error('Erro ao deletar demanda:', error);
+          throw error;
+        }
+        
+        console.log('Index: Demanda deletada com sucesso');
+        return; // Não precisamos continuar, o realtime vai atualizar
+      }
       
       // Se há demandas para processar
       if (updatedEvent.demands) {
@@ -164,6 +182,18 @@ const Index = () => {
     try {
       console.log('Deletando evento:', eventId);
       
+      // Primeiro deletar todas as demandas do evento
+      const { error: demandsError } = await supabase
+        .from('demands')
+        .delete()
+        .eq('event_id', eventId);
+
+      if (demandsError) {
+        console.error('Erro ao deletar demandas do evento:', demandsError);
+        throw demandsError;
+      }
+
+      // Depois deletar o evento
       const { error } = await supabase
         .from('events')
         .delete()

@@ -56,6 +56,8 @@ export const useRealtimeEvents = () => {
   // Função para carregar eventos arquivados apenas quando necessário
   const loadArchivedEvents = async () => {
     try {
+      console.log('Carregando eventos arquivados...');
+      
       const { data: archivedData, error: archivedError } = await supabase
         .from('events')
         .select(`
@@ -66,9 +68,13 @@ export const useRealtimeEvents = () => {
         .order('created_at', { ascending: false })
         .limit(50);
 
-      if (archivedError) throw archivedError;
+      if (archivedError) {
+        console.error('Erro ao carregar eventos arquivados:', archivedError);
+        throw archivedError;
+      }
 
       const transformedArchived = transformEvents(archivedData);
+      console.log('Eventos arquivados carregados:', transformedArchived.length);
       setArchivedEvents(transformedArchived);
     } catch (error) {
       console.error('Erro ao carregar eventos arquivados:', error);
