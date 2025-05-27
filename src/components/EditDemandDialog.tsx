@@ -44,11 +44,21 @@ export const EditDemandDialog: React.FC<EditDemandDialogProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !subject || !date) return;
+    
+    if (!title.trim() || !subject.trim() || !date) {
+      console.log('Campos obrigatórios não preenchidos na edição');
+      return;
+    }
+
+    console.log('Atualizando demanda:', demand.id, {
+      title: title.trim(),
+      subject: subject.trim(),
+      date: date.toISOString(),
+    });
 
     onUpdateDemand(demand.id, {
-      title,
-      subject,
+      title: title.trim(),
+      subject: subject.trim(),
       date: date.toISOString(),
     });
 

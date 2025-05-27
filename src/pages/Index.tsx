@@ -24,6 +24,8 @@ const Index = () => {
 
   const handleCreateEvent = async (eventData: Omit<Event, 'id' | 'demands'>) => {
     try {
+      console.log('Criando evento:', eventData);
+      
       const { error } = await supabase
         .from('events')
         .insert([{
@@ -33,59 +35,79 @@ const Index = () => {
           archived: false
         }]);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao criar evento:', error);
+        throw error;
+      }
+      
       console.log('Evento criado com sucesso');
     } catch (error) {
-      console.error('Erro ao criar evento:', error);
+      console.error('Erro completo ao criar evento:', error);
     }
   };
 
   const handleUpdateEvent = async (eventId: string, updatedEvent: Partial<Event>) => {
     try {
-      console.log('Atualizando evento:', eventId, updatedEvent);
+      console.log('Index: Atualizando evento:', eventId, updatedEvent);
       
-      // Se há demandas para criar, inserir ou atualizar
+      // Se há demandas para processar
       if (updatedEvent.demands) {
+        console.log('Index: Processando', updatedEvent.demands.length, 'demandas');
+        
         for (const demand of updatedEvent.demands) {
           if (demand.id && demand.id.startsWith('temp-')) {
             // Nova demanda (id temporário) - inserir no banco
-            console.log('Inserindo nova demanda:', demand);
-            const { error } = await supabase
+            console.log('Index: Inserindo nova demanda:', demand);
+            
+            const insertData = {
+              event_id: eventId,
+              title: demand.title,
+              subject: demand.subject,
+              date: demand.date,
+              urgency: 'Média', // Sempre usar 'Média' como urgência padrão
+              completed: false,
+              completed_at: null
+            };
+            
+            console.log('Index: Dados para inserção:', insertData);
+            
+            const { data, error } = await supabase
               .from('demands')
-              .insert({
-                event_id: eventId,
-                title: demand.title,
-                subject: demand.subject,
-                date: demand.date,
-                urgency: demand.urgency || 'Média',
-                completed: demand.completed || false,
-                completed_at: demand.completedAt || null
-              });
+              .insert(insertData)
+              .select()
+              .single();
             
             if (error) {
               console.error('Erro ao inserir demanda:', error);
               throw error;
             }
-            console.log('Demanda inserida com sucesso');
+            
+            console.log('Index: Demanda inserida com sucesso:', data);
+            
           } else if (demand.id && !demand.id.startsWith('temp-')) {
             // Demanda existente - atualizar no banco
-            console.log('Atualizando demanda existente:', demand);
+            console.log('Index: Atualizando demanda existente:', demand);
+            
+            const updateData = {
+              title: demand.title,
+              subject: demand.subject,
+              date: demand.date,
+              urgency: demand.urgency || 'Média',
+              completed: demand.completed,
+              completed_at: demand.completedAt || null
+            };
+            
             const { error } = await supabase
               .from('demands')
-              .update({
-                title: demand.title,
-                subject: demand.subject,
-                date: demand.date,
-                urgency: demand.urgency || 'Média',
-                completed: demand.completed,
-                completed_at: demand.completedAt
-              })
+              .update(updateData)
               .eq('id', demand.id);
             
             if (error) {
               console.error('Erro ao atualizar demanda:', error);
               throw error;
             }
+            
+            console.log('Index: Demanda atualizada com sucesso');
           }
         }
       }
@@ -97,42 +119,64 @@ const Index = () => {
       if (updatedEvent.date !== undefined) eventUpdateData.date = updatedEvent.date;
 
       if (Object.keys(eventUpdateData).length > 0) {
+        console.log('Index: Atualizando dados do evento:', eventUpdateData);
+        
         const { error } = await supabase
           .from('events')
           .update(eventUpdateData)
           .eq('id', eventId);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Erro ao atualizar evento:', error);
+          throw error;
+        }
+        
+        console.log('Index: Evento atualizado com sucesso');
       }
       
     } catch (error) {
-      console.error('Erro ao atualizar evento:', error);
+      console.error('Index: Erro completo ao atualizar evento:', error);
+      // Não relançar o erro para evitar travamentos na UI
     }
   };
 
   const handleArchiveEvent = async (eventId: string) => {
     try {
+      console.log('Arquivando evento:', eventId);
+      
       const { error } = await supabase
         .from('events')
         .update({ archived: true })
         .eq('id', eventId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao arquivar evento:', error);
+        throw error;
+      }
+      
+      console.log('Evento arquivado com sucesso');
     } catch (error) {
-      console.error('Erro ao arquivar evento:', error);
+      console.error('Erro completo ao arquivar evento:', error);
     }
   };
 
   const handleDeleteEvent = async (eventId: string) => {
     try {
+      console.log('Deletando evento:', eventId);
+      
       const { error } = await supabase
         .from('events')
         .delete()
         .eq('id', eventId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao deletar evento:', error);
+        throw error;
+      }
+      
+      console.log('Evento deletado com sucesso');
     } catch (error) {
-      console.error('Erro ao deletar evento:', error);
+      console.error('Erro completo ao deletar evento:', error);
     }
   };
 

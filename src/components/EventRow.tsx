@@ -60,21 +60,31 @@ export const EventRow: React.FC<EventRowProps> = ({
   };
 
   const handleCreateDemand = (demandData: Omit<Demand, 'id' | 'completed' | 'completedAt' | 'created_at' | 'updated_at'>) => {
+    console.log('EventRow: Criando nova demanda', demandData);
+    
     // Criar uma demanda com ID temporário UUID válido
     const tempId = `temp-${crypto.randomUUID()}`;
     const newDemand: Demand = {
       ...demandData,
       id: tempId,
       completed: false,
-      completedAt: undefined
+      completedAt: undefined,
+      urgency: 'Média' // Sempre definir urgência como 'Média'
     };
     
+    console.log('EventRow: Nova demanda criada', newDemand);
+    
+    // Atualizar o evento com a nova demanda
+    const updatedDemands = [...event.demands, newDemand];
+    
     onUpdateEvent(event.id, {
-      demands: [...event.demands, newDemand]
+      demands: updatedDemands
     });
   };
 
   const handleUpdateDemand = (demandId: string, updatedDemand: Partial<Demand>) => {
+    console.log('EventRow: Atualizando demanda', demandId, updatedDemand);
+    
     const updatedDemands = event.demands.map(demand =>
       demand.id === demandId ? { ...demand, ...updatedDemand } : demand
     );
@@ -82,6 +92,8 @@ export const EventRow: React.FC<EventRowProps> = ({
   };
 
   const handleDeleteDemand = (demandId: string) => {
+    console.log('EventRow: Deletando demanda', demandId);
+    
     const updatedDemands = event.demands.filter(demand => demand.id !== demandId);
     onUpdateEvent(event.id, { demands: updatedDemands });
   };
@@ -117,7 +129,10 @@ export const EventRow: React.FC<EventRowProps> = ({
 
         {/* Add Demand Button */}
         <Button
-          onClick={() => setIsCreateDemandOpen(true)}
+          onClick={() => {
+            console.log('EventRow: Abrindo dialog de criação de demanda');
+            setIsCreateDemandOpen(true);
+          }}
           size="sm"
           className="bg-blue-500/80 hover:bg-blue-600/80 backdrop-blur-sm text-white rounded-full w-6 h-6 p-0 shadow-lg flex-shrink-0 border border-blue-400/30"
         >
