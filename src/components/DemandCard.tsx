@@ -38,15 +38,15 @@ export const DemandCard: React.FC<DemandCardProps> = ({
   };
 
   return (
-    <div className="bg-white/15 backdrop-blur-md rounded-xl border border-white/30 p-4 min-w-[280px] shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-white/20">
-      <div className="flex items-start justify-between mb-3">
-        <div className={`w-3 h-3 rounded-full ${getStatusColor()}`} />
+    <div className="bg-white/15 backdrop-blur-md rounded-lg border border-white/30 p-3 min-w-[240px] shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-white/20">
+      <div className="flex items-start justify-between mb-2">
+        <div className={`w-2 h-2 rounded-full ${getStatusColor()}`} />
         <div className="flex gap-1">
           <Button
             size="sm"
             variant="ghost"
             onClick={() => setIsEditOpen(true)}
-            className="h-6 w-6 p-0 text-white/70 hover:text-white hover:bg-white/20"
+            className="h-5 w-5 p-0 text-white/70 hover:text-white hover:bg-white/20"
           >
             <Edit className="w-3 h-3" />
           </Button>
@@ -54,7 +54,7 @@ export const DemandCard: React.FC<DemandCardProps> = ({
             size="sm"
             variant="ghost"
             onClick={handleComplete}
-            className="h-6 w-6 p-0 text-green-400 hover:text-green-300 hover:bg-white/20"
+            className="h-5 w-5 p-0 text-green-400 hover:text-green-300 hover:bg-white/20"
           >
             <Check className="w-3 h-3" />
           </Button>
@@ -62,15 +62,15 @@ export const DemandCard: React.FC<DemandCardProps> = ({
             size="sm"
             variant="ghost"
             onClick={() => onDeleteDemand(demand.id)}
-            className="h-6 w-6 p-0 text-red-400 hover:text-red-300 hover:bg-white/20"
+            className="h-5 w-5 p-0 text-red-400 hover:text-red-300 hover:bg-white/20"
           >
             <Trash2 className="w-3 h-3" />
           </Button>
         </div>
       </div>
 
-      <h3 className="font-medium text-white mb-2 text-sm">{demand.title}</h3>
-      <p className="text-white/80 text-xs mb-3 line-clamp-2">{demand.subject}</p>
+      <h3 className="font-medium text-white mb-1 text-xs leading-tight">{demand.title}</h3>
+      <p className="text-white/80 text-xs mb-2 line-clamp-2 leading-tight">{demand.subject}</p>
       
       <div className="text-blue-200 text-xs">
         {format(new Date(demand.date), "dd/MM/yyyy", { locale: ptBR })}

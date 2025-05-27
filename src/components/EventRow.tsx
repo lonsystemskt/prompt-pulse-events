@@ -69,8 +69,8 @@ export const EventRow: React.FC<EventRowProps> = ({
   };
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 shadow-xl">
-      <div className="flex items-center gap-4 mb-4">
+    <div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-4 shadow-xl">
+      <div className="flex items-center gap-3 mb-3">
         <EventOptionsDropdown
           event={event}
           onUpdateEvent={onUpdateEvent}
@@ -78,20 +78,19 @@ export const EventRow: React.FC<EventRowProps> = ({
           onDeleteEvent={onDeleteEvent}
         />
         
-        <div className="flex items-center gap-4 flex-1">
-          <h2 className="text-xl font-semibold text-white">{event.name}</h2>
-          <span className="text-blue-200 text-sm">
-            {format(new Date(event.date), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <h2 className="text-lg font-semibold text-white truncate">{event.name}</h2>
+          <span className="text-blue-200 text-xs whitespace-nowrap">
+            {format(new Date(event.date), "dd/MM/yyyy", { locale: ptBR })}
           </span>
         </div>
 
         <Button
           onClick={() => setIsCreateDemandOpen(true)}
           size="sm"
-          className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
+          className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-full w-8 h-8 p-0 shadow-lg"
         >
-          <Plus className="w-4 h-4 mr-1" />
-          Nova Demanda
+          <Plus className="w-4 h-4" />
         </Button>
       </div>
 
@@ -102,20 +101,20 @@ export const EventRow: React.FC<EventRowProps> = ({
               variant="ghost"
               size="sm"
               onClick={() => scroll('left')}
-              className="absolute left-0 z-10 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-full w-8 h-8 p-0"
+              className="absolute left-0 z-10 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-full w-7 h-7 p-0"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3 h-3" />
             </Button>
           )}
 
           <div
             ref={setContainerRef}
             onScroll={(e) => setScrollPosition(e.currentTarget.scrollLeft)}
-            className="flex gap-4 overflow-x-auto scrollbar-hide px-8"
+            className="flex gap-3 overflow-x-auto scrollbar-hide px-6"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {activeDemands.length === 0 ? (
-              <div className="text-white/60 text-center py-8 flex-1">
+              <div className="text-white/60 text-center py-6 flex-1 text-sm">
                 Nenhuma demanda criada ainda
               </div>
             ) : (
@@ -135,9 +134,9 @@ export const EventRow: React.FC<EventRowProps> = ({
               variant="ghost"
               size="sm"
               onClick={() => scroll('right')}
-              className="absolute right-0 z-10 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-full w-8 h-8 p-0"
+              className="absolute right-0 z-10 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-full w-7 h-7 p-0"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3 h-3" />
             </Button>
           )}
         </div>

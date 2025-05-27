@@ -33,6 +33,7 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
   const [name, setName] = useState(event.name);
   const [logo, setLogo] = useState(event.logo || '');
   const [date, setDate] = useState<Date>(new Date(event.date));
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   useEffect(() => {
     setName(event.name);
@@ -62,6 +63,13 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    if (selectedDate) {
+      setDate(selectedDate);
+    }
+    setIsCalendarOpen(false);
   };
 
   return (
@@ -117,7 +125,7 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
 
           <div className="space-y-2">
             <Label>Data do Evento</Label>
-            <Popover>
+            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -131,7 +139,7 @@ export const EditEventDialog: React.FC<EditEventDialogProps> = ({
                 <Calendar
                   mode="single"
                   selected={date}
-                  onSelect={(newDate) => newDate && setDate(newDate)}
+                  onSelect={handleDateSelect}
                   initialFocus
                   className="bg-slate-900 text-white"
                 />

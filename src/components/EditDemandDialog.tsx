@@ -34,6 +34,7 @@ export const EditDemandDialog: React.FC<EditDemandDialogProps> = ({
   const [title, setTitle] = useState(demand.title);
   const [subject, setSubject] = useState(demand.subject);
   const [date, setDate] = useState<Date>(new Date(demand.date));
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   useEffect(() => {
     setTitle(demand.title);
@@ -52,6 +53,13 @@ export const EditDemandDialog: React.FC<EditDemandDialogProps> = ({
     });
 
     onOpenChange(false);
+  };
+
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    if (selectedDate) {
+      setDate(selectedDate);
+    }
+    setIsCalendarOpen(false);
   };
 
   return (
@@ -88,7 +96,7 @@ export const EditDemandDialog: React.FC<EditDemandDialogProps> = ({
 
           <div className="space-y-2">
             <Label>Data da Demanda</Label>
-            <Popover>
+            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -102,7 +110,7 @@ export const EditDemandDialog: React.FC<EditDemandDialogProps> = ({
                 <Calendar
                   mode="single"
                   selected={date}
-                  onSelect={(newDate) => newDate && setDate(newDate)}
+                  onSelect={handleDateSelect}
                   initialFocus
                   className="bg-slate-900 text-white"
                 />

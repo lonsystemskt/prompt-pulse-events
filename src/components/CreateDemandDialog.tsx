@@ -32,6 +32,7 @@ export const CreateDemandDialog: React.FC<CreateDemandDialogProps> = ({
   const [title, setTitle] = useState('');
   const [subject, setSubject] = useState('');
   const [date, setDate] = useState<Date>();
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +49,11 @@ export const CreateDemandDialog: React.FC<CreateDemandDialogProps> = ({
     setSubject('');
     setDate(undefined);
     onOpenChange(false);
+  };
+
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    setDate(selectedDate);
+    setIsCalendarOpen(false);
   };
 
   return (
@@ -84,7 +90,7 @@ export const CreateDemandDialog: React.FC<CreateDemandDialogProps> = ({
 
           <div className="space-y-2">
             <Label>Data da Demanda</Label>
-            <Popover>
+            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -101,7 +107,7 @@ export const CreateDemandDialog: React.FC<CreateDemandDialogProps> = ({
                 <Calendar
                   mode="single"
                   selected={date}
-                  onSelect={setDate}
+                  onSelect={handleDateSelect}
                   initialFocus
                   className="bg-slate-900 text-white"
                 />
