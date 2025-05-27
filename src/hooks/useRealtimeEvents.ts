@@ -32,12 +32,32 @@ export const useRealtimeEvents = () => {
 
       const transformedEvents = (eventsData || []).map(event => ({
         ...event,
-        demands: event.demands || []
+        demands: (event.demands || []).map(demand => ({
+          id: demand.id,
+          title: demand.title,
+          subject: demand.subject,
+          date: demand.date,
+          completed: demand.completed,
+          completedAt: demand.completed_at,
+          urgency: demand.urgency || 'Média',
+          created_at: demand.created_at,
+          updated_at: demand.updated_at
+        }))
       }));
 
       const transformedArchived = (archivedData || []).map(event => ({
         ...event,
-        demands: event.demands || []
+        demands: (event.demands || []).map(demand => ({
+          id: demand.id,
+          title: demand.title,
+          subject: demand.subject,
+          date: demand.date,
+          completed: demand.completed,
+          completedAt: demand.completed_at,
+          urgency: demand.urgency || 'Média',
+          created_at: demand.created_at,
+          updated_at: demand.updated_at
+        }))
       }));
 
       setEvents(transformedEvents);

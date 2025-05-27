@@ -21,8 +21,10 @@ export const useRealtimeNotes = () => {
         id: note.id,
         subject: note.subject,
         text: note.title,
-        assignee: note.author,
-        date: note.date
+        assignee: note.author as 'Thiago' | 'Kalil',
+        date: note.date, // Manter como string
+        created_at: note.created_at,
+        updated_at: note.updated_at
       }));
 
       setNotes(transformedNotes);

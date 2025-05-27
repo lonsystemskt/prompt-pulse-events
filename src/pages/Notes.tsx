@@ -34,7 +34,7 @@ const Notes = () => {
           subject: noteData.subject,
           title: noteData.text,
           author: noteData.assignee,
-          date: noteData.date
+          date: noteData.date // Agora é string
         }]);
 
       if (error) throw error;
@@ -52,7 +52,7 @@ const Notes = () => {
           subject: updatedNote.subject,
           title: updatedNote.text,
           author: updatedNote.assignee,
-          date: updatedNote.date
+          date: updatedNote.date // Agora é string
         })
         .eq('id', updatedNote.id);
 

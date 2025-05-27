@@ -23,7 +23,12 @@ export const useRealtimeCRM = () => {
         email: record.email,
         whatsapp: record.contact,
         subject: record.subject,
-        comments: record.file ? [record.file] : []
+        comments: record.file ? [record.file] : [],
+        created_at: record.created_at,
+        updated_at: record.updated_at,
+        date: record.date,
+        completed: record.completed,
+        status: record.status
       }));
 
       setContacts(transformedContacts);
