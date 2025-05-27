@@ -61,18 +61,18 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900">
       <Navigation />
       
       <div className="mx-10 p-4 max-w-none">
         {/* Header */}
-        <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-6 mb-4 shadow-2xl h-[120px] flex items-center">
+        <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-6 mb-4 shadow-2xl h-[120px] flex items-center">
           <div className="flex items-center justify-between w-full">
             <div className="flex-1">
               <h1 className="text-4xl font-bold text-white mb-2">
                 Lon Demandas
               </h1>
-              <p className="text-blue-300">Desenvolvido por Lon Systems. {formatDateTime(currentDateTime)}</p>
+              <p className="text-cyan-300">Desenvolvido por Lon Systems. {formatDateTime(currentDateTime)}</p>
             </div>
           </div>
         </div>
@@ -81,7 +81,7 @@ const Index = () => {
         <div className="mb-6 flex justify-end">
           <Button
             onClick={() => setIsCreateEventOpen(true)}
-            className="bg-blue-500/80 hover:bg-blue-600/80 backdrop-blur-sm text-white shadow-lg border border-blue-400/30 transition-all duration-200"
+            className="bg-gradient-to-r from-cyan-500/80 to-blue-500/80 hover:from-cyan-600/80 hover:to-blue-600/80 backdrop-blur-sm text-white shadow-lg border border-cyan-400/30 transition-all duration-200"
           >
             <Plus className="w-4 h-4 mr-2" />
             Novo Evento
@@ -91,7 +91,7 @@ const Index = () => {
         {/* Events List */}
         <div className="space-y-4">
           {events.length === 0 ? (
-            <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-12 text-center shadow-xl">
+            <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-12 text-center shadow-xl">
               <div className="text-slate-400 text-lg">
                 Nenhum evento criado ainda. Clique em "Novo Evento" para começar.
               </div>

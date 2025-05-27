@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Archive, Home } from "lucide-react";
+import { Archive, Home, Users, StickyNote } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export const Navigation = () => {
@@ -15,22 +15,46 @@ export const Navigation = () => {
       <Button
         onClick={() => navigate('/')}
         variant={isActive('/') ? "default" : "outline"}
-        className={`backdrop-blur-lg transition-all duration-200 ${
+        className={`backdrop-blur-xl transition-all duration-200 ${
           isActive('/') 
-            ? "bg-blue-500/80 hover:bg-blue-600/80 text-white border-blue-400/30" 
-            : "bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50"
+            ? "bg-gradient-to-r from-cyan-500/80 to-blue-500/80 hover:from-cyan-600/80 hover:to-blue-600/80 text-white border-cyan-400/30" 
+            : "bg-slate-800/40 border-cyan-500/30 text-white hover:bg-slate-700/50"
         }`}
       >
         <Home className="w-4 h-4 mr-2" />
         Dashboard
       </Button>
       <Button
+        onClick={() => navigate('/crm')}
+        variant={isActive('/crm') ? "default" : "outline"}
+        className={`backdrop-blur-xl transition-all duration-200 ${
+          isActive('/crm') 
+            ? "bg-gradient-to-r from-cyan-500/80 to-blue-500/80 hover:from-cyan-600/80 hover:to-blue-600/80 text-white border-cyan-400/30" 
+            : "bg-slate-800/40 border-cyan-500/30 text-white hover:bg-slate-700/50"
+        }`}
+      >
+        <Users className="w-4 h-4 mr-2" />
+        CRM
+      </Button>
+      <Button
+        onClick={() => navigate('/notes')}
+        variant={isActive('/notes') ? "default" : "outline"}
+        className={`backdrop-blur-xl transition-all duration-200 ${
+          isActive('/notes') 
+            ? "bg-gradient-to-r from-cyan-500/80 to-blue-500/80 hover:from-cyan-600/80 hover:to-blue-600/80 text-white border-cyan-400/30" 
+            : "bg-slate-800/40 border-cyan-500/30 text-white hover:bg-slate-700/50"
+        }`}
+      >
+        <StickyNote className="w-4 h-4 mr-2" />
+        Anotações
+      </Button>
+      <Button
         onClick={() => navigate('/archived-events')}
         variant={isActive('/archived-events') ? "default" : "outline"}
-        className={`backdrop-blur-lg transition-all duration-200 ${
+        className={`backdrop-blur-xl transition-all duration-200 ${
           isActive('/archived-events') 
-            ? "bg-blue-500/80 hover:bg-blue-600/80 text-white border-blue-400/30" 
-            : "bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50"
+            ? "bg-gradient-to-r from-cyan-500/80 to-blue-500/80 hover:from-cyan-600/80 hover:to-blue-600/80 text-white border-cyan-400/30" 
+            : "bg-slate-800/40 border-cyan-500/30 text-white hover:bg-slate-700/50"
         }`}
       >
         <Archive className="w-4 h-4 mr-2" />

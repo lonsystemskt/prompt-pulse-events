@@ -47,12 +47,12 @@ const ArchivedEvents = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900">
       <Navigation />
       
       <div className="mx-10 p-4 max-w-none">
         {/* Header */}
-        <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-6 mb-6 shadow-2xl h-[120px] flex items-center">
+        <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-6 mb-6 shadow-2xl h-[120px] flex items-center">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-4 flex-1">
               <Button
@@ -66,7 +66,7 @@ const ArchivedEvents = () => {
                 <h1 className="text-4xl font-bold text-white mb-2">
                   Eventos Arquivados
                 </h1>
-                <p className="text-blue-300">Desenvolvido por Lon Systems. {formatDateTime(currentDateTime)}</p>
+                <p className="text-cyan-300">Desenvolvido por Lon Systems. {formatDateTime(currentDateTime)}</p>
               </div>
             </div>
           </div>
@@ -75,7 +75,7 @@ const ArchivedEvents = () => {
         {/* Archived Events List */}
         <div className="space-y-4">
           {archivedEvents.length === 0 ? (
-            <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-12 text-center shadow-xl">
+            <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-12 text-center shadow-xl">
               <div className="text-slate-400 text-lg">
                 Nenhum evento arquivado
               </div>
@@ -84,7 +84,7 @@ const ArchivedEvents = () => {
             archivedEvents.map((event) => (
               <div
                 key={event.id}
-                className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4"
+                className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-4 shadow-2xl mb-4"
               >
                 <div className="flex items-center gap-3">
                   {/* Event Logo and Info */}
@@ -99,7 +99,7 @@ const ArchivedEvents = () => {
                     
                     <div className="min-w-0 flex-1 w-[100px]">
                       <h2 className="text-lg font-semibold text-white truncate">{event.name}</h2>
-                      <span className="text-blue-300 text-sm">
+                      <span className="text-cyan-300 text-sm">
                         {format(new Date(event.date), "dd/MM/yyyy", { locale: ptBR })}
                       </span>
                       <p className="text-slate-400 text-sm">
@@ -113,7 +113,7 @@ const ArchivedEvents = () => {
                     <Button
                       onClick={() => handleRestore(event.id)}
                       size="sm"
-                      className="bg-green-500/80 hover:bg-green-600/80 backdrop-blur-sm border border-green-400/30 transition-all duration-200 text-sm px-3 py-2"
+                      className="bg-green-500/20 hover:bg-green-500/30 backdrop-blur-sm border border-green-500/30 transition-all duration-200 text-sm px-3 py-2 text-green-300"
                     >
                       <RotateCcw className="w-4 h-4 mr-1" />
                       Restaurar
@@ -121,7 +121,7 @@ const ArchivedEvents = () => {
                     <Button
                       onClick={() => handleDelete(event.id)}
                       size="sm"
-                      className="bg-red-500/80 hover:bg-red-600/80 backdrop-blur-sm border border-red-400/30 transition-all duration-200 text-sm px-3 py-2"
+                      className="bg-red-500/20 hover:bg-red-500/30 backdrop-blur-sm border border-red-500/30 transition-all duration-200 text-sm px-3 py-2 text-red-300"
                     >
                       <Trash2 className="w-4 h-4 mr-1" />
                       Excluir
