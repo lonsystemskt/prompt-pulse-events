@@ -69,8 +69,8 @@ export const EventRow: React.FC<EventRowProps> = ({
   };
 
   return (
-    <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4">
-      <div className="flex items-center gap-3">
+    <div className="bg-slate-800/50 backdrop-blur-xl rounded-3xl border border-slate-600/40 p-6 shadow-2xl mb-4 transition-all duration-300 hover:shadow-3xl">
+      <div className="flex items-center gap-4">
         {/* Event Options */}
         <EventOptionsDropdown
           event={event}
@@ -79,19 +79,19 @@ export const EventRow: React.FC<EventRowProps> = ({
           onDeleteEvent={onDeleteEvent}
         />
 
-        {/* Event Logo and Info */}
-        <div className="flex items-center gap-2">
+        {/* Event Logo and Info - Logo aumentada em 50% */}
+        <div className="flex items-center gap-3">
           {event.logo && (
             <img
               src={event.logo}
               alt={event.name}
-              className="w-8 h-8 rounded-lg object-cover shadow-lg flex-shrink-0"
+              className="w-12 h-12 rounded-xl object-cover shadow-lg flex-shrink-0 border-2 border-slate-600/30"
             />
           )}
           
-          <div className="w-[70px]">
+          <div className="w-[80px]">
             <h2 className="text-sm font-semibold text-white truncate">{event.name}</h2>
-            <span className="text-blue-300 text-xs">
+            <span className="text-blue-300 text-xs font-medium">
               {format(new Date(event.date), "dd/MM/yyyy", { locale: ptBR })}
             </span>
           </div>
@@ -101,33 +101,38 @@ export const EventRow: React.FC<EventRowProps> = ({
         <Button
           onClick={() => setIsCreateDemandOpen(true)}
           size="sm"
-          className="bg-blue-500/80 hover:bg-blue-600/80 backdrop-blur-sm text-white rounded-full w-6 h-6 p-0 shadow-lg flex-shrink-0 border border-blue-400/30"
+          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-full w-8 h-8 p-0 shadow-lg flex-shrink-0 border-0 transition-all duration-200 transform hover:scale-110"
         >
-          <Plus className="w-3 h-3" />
+          <Plus className="w-4 h-4" />
         </Button>
 
-        {/* Demands Section with Navigation */}
+        {/* Demands Section with Always Visible Navigation */}
         <div className="flex-1 relative min-w-0">
           <div className="flex items-center">
-            {canScrollLeft && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => scroll('left')}
-                className="absolute left-0 z-10 bg-slate-700/80 backdrop-blur-sm hover:bg-slate-600/80 text-white rounded-full w-5 h-5 p-0 border border-slate-500/30 shadow-lg"
-              >
-                <ChevronLeft className="w-2 h-2" />
-              </Button>
-            )}
+            {/* Left Arrow - Always Visible */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => scroll('left')}
+              disabled={!canScrollLeft}
+              className={`absolute left-0 z-10 bg-slate-700/90 backdrop-blur-sm hover:bg-slate-600/90 text-white rounded-full w-8 h-8 p-0 border border-slate-500/50 shadow-lg transition-all duration-200 ${
+                !canScrollLeft ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'
+              }`}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
 
             <div
               ref={setContainerRef}
               onScroll={(e) => setScrollPosition(e.currentTarget.scrollLeft)}
-              className="flex gap-2 overflow-x-auto scrollbar-hide px-4"
+              className="flex gap-3 overflow-x-auto scrollbar-hide px-12"
             >
               {activeDemands.length === 0 ? (
-                <div className="text-slate-400 text-center py-2 flex-1 text-xs bg-slate-700/30 rounded-xl border border-slate-600/20 backdrop-blur-sm min-w-[120px]">
-                  Nenhuma demanda
+                <div className="text-slate-400 text-center py-4 flex-1 text-sm bg-slate-700/40 rounded-2xl border border-slate-600/30 backdrop-blur-sm min-w-[160px]">
+                  <div className="flex flex-col items-center gap-2">
+                    <Calendar className="w-5 h-5 text-slate-500" />
+                    <span>Nenhuma demanda</span>
+                  </div>
                 </div>
               ) : (
                 activeDemands.map((demand) => (
@@ -141,16 +146,18 @@ export const EventRow: React.FC<EventRowProps> = ({
               )}
             </div>
 
-            {canScrollRight && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => scroll('right')}
-                className="absolute right-0 z-10 bg-slate-700/80 backdrop-blur-sm hover:bg-slate-600/80 text-white rounded-full w-5 h-5 p-0 border border-slate-500/30 shadow-lg"
-              >
-                <ChevronRight className="w-2 h-2" />
-              </Button>
-            )}
+            {/* Right Arrow - Always Visible */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => scroll('right')}
+              disabled={!canScrollRight}
+              className={`absolute right-0 z-10 bg-slate-700/90 backdrop-blur-sm hover:bg-slate-600/90 text-white rounded-full w-8 h-8 p-0 border border-slate-500/50 shadow-lg transition-all duration-200 ${
+                !canScrollRight ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'
+              }`}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
           </div>
         </div>
       </div>
