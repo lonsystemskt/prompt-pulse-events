@@ -41,19 +41,19 @@ const CompletedDemands = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 p-4">
-      <div className="max-w-[calc(100vw-30px)] mx-auto">
-        {/* Header */}
-        <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-6 mb-6 shadow-2xl">
-          <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+      <div className="container mx-auto p-4 max-w-7xl">
+        {/* Header - Same height as other pages */}
+        <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-6 mb-6 shadow-2xl h-[120px] flex items-center">
+          <div className="flex items-center gap-4 w-full">
             <Button
               onClick={() => navigate('/')}
               variant="ghost"
-              className="text-white hover:bg-slate-700/50 p-2"
+              className="text-white hover:bg-slate-700/50 p-2 transition-all duration-200"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <div>
+            <div className="flex-1">
               <h1 className="text-3xl font-bold text-white mb-2">
                 Demandas Concluídas
               </h1>
@@ -62,19 +62,19 @@ const CompletedDemands = () => {
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation - Consistent with other pages */}
         <div className="flex gap-3 mb-6">
           <Button
             onClick={() => navigate('/')}
             variant="outline"
-            className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg"
+            className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
           >
             Dashboard
           </Button>
           <Button
             onClick={() => navigate('/archived-events')}
             variant="outline"
-            className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg"
+            className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
           >
             Eventos Arquivados
           </Button>
@@ -93,13 +93,13 @@ const CompletedDemands = () => {
               const completedDemands = event.demands.filter(demand => demand.completed);
               
               return (
-                <div key={event.id} className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-6 shadow-xl">
+                <div key={event.id} className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-6 shadow-xl transition-all duration-200 hover:shadow-2xl">
                   <div className="flex items-center gap-3 pb-4 border-b border-slate-600/30 mb-4">
                     {event.logo && (
                       <img
                         src={event.logo}
                         alt={event.name}
-                        className="w-12 h-12 rounded-lg object-cover shadow-lg"
+                        className="w-12 h-12 rounded-lg object-cover shadow-lg flex-shrink-0"
                       />
                     )}
                     <div>
@@ -114,7 +114,7 @@ const CompletedDemands = () => {
                     {completedDemands.map((demand) => (
                       <div
                         key={demand.id}
-                        className="bg-slate-700/40 backdrop-blur-sm rounded-xl border border-slate-600/20 p-4"
+                        className="bg-slate-700/40 backdrop-blur-sm rounded-xl border border-slate-600/20 p-4 transition-all duration-200 hover:bg-slate-700/50"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
@@ -131,11 +131,11 @@ const CompletedDemands = () => {
                               )}
                             </div>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 flex-shrink-0">
                             <Button
                               size="sm"
                               onClick={() => handleRestore(event.id, demand.id)}
-                              className="bg-green-500/80 hover:bg-green-600/80 backdrop-blur-sm border border-green-400/30"
+                              className="bg-green-500/80 hover:bg-green-600/80 backdrop-blur-sm border border-green-400/30 transition-all duration-200"
                             >
                               <RotateCcw className="w-4 h-4 mr-1" />
                               Restaurar
@@ -143,7 +143,7 @@ const CompletedDemands = () => {
                             <Button
                               size="sm"
                               onClick={() => handleDelete(event.id, demand.id)}
-                              className="bg-red-500/80 hover:bg-red-600/80 backdrop-blur-sm border border-red-400/30"
+                              className="bg-red-500/80 hover:bg-red-600/80 backdrop-blur-sm border border-red-400/30 transition-all duration-200"
                             >
                               <Trash2 className="w-4 h-4 mr-1" />
                               Excluir

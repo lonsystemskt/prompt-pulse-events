@@ -71,8 +71,8 @@ export const EventRow: React.FC<EventRowProps> = ({
   return (
     <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4">
       <div className="flex items-center gap-4">
-        {/* Event Info Section */}
-        <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
+        {/* Event Info Section - Fixed width to prevent layout shifts */}
+        <div className="flex items-center gap-3 min-w-[280px] flex-shrink-0">
           <EventOptionsDropdown
             event={event}
             onUpdateEvent={onUpdateEvent}
@@ -84,11 +84,11 @@ export const EventRow: React.FC<EventRowProps> = ({
             <img
               src={event.logo}
               alt={event.name}
-              className="w-12 h-12 rounded-lg object-cover shadow-lg"
+              className="w-12 h-12 rounded-lg object-cover shadow-lg flex-shrink-0"
             />
           )}
           
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <h2 className="text-base font-semibold text-white truncate">{event.name}</h2>
             <span className="text-blue-300 text-xs">
               {format(new Date(event.date), "dd/MM/yyyy", { locale: ptBR })}
@@ -96,7 +96,7 @@ export const EventRow: React.FC<EventRowProps> = ({
           </div>
         </div>
 
-        {/* Add Demand Button */}
+        {/* Add Demand Button - Fixed position */}
         <Button
           onClick={() => setIsCreateDemandOpen(true)}
           size="sm"
@@ -105,15 +105,15 @@ export const EventRow: React.FC<EventRowProps> = ({
           <Plus className="w-4 h-4" />
         </Button>
 
-        {/* Demands Section */}
-        <div className="flex-1 relative">
+        {/* Demands Section with Navigation */}
+        <div className="flex-1 relative min-w-0">
           <div className="flex items-center">
             {canScrollLeft && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => scroll('left')}
-                className="absolute left-0 z-10 bg-slate-700/50 backdrop-blur-sm hover:bg-slate-600/50 text-white rounded-full w-7 h-7 p-0 border border-slate-500/30"
+                className="absolute left-0 z-10 bg-slate-700/80 backdrop-blur-sm hover:bg-slate-600/80 text-white rounded-full w-7 h-7 p-0 border border-slate-500/30 shadow-lg"
               >
                 <ChevronLeft className="w-3 h-3" />
               </Button>
@@ -123,10 +123,14 @@ export const EventRow: React.FC<EventRowProps> = ({
               ref={setContainerRef}
               onScroll={(e) => setScrollPosition(e.currentTarget.scrollLeft)}
               className="flex gap-3 overflow-x-auto scrollbar-hide px-6"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              style={{ 
+                scrollbarWidth: 'none', 
+                msOverflowStyle: 'none',
+                WebkitScrollbar: { display: 'none' }
+              }}
             >
               {activeDemands.length === 0 ? (
-                <div className="text-slate-400 text-center py-4 flex-1 text-sm bg-slate-700/30 rounded-xl border border-slate-600/20 backdrop-blur-sm">
+                <div className="text-slate-400 text-center py-4 flex-1 text-sm bg-slate-700/30 rounded-xl border border-slate-600/20 backdrop-blur-sm min-w-[200px]">
                   Nenhuma demanda
                 </div>
               ) : (
@@ -146,7 +150,7 @@ export const EventRow: React.FC<EventRowProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => scroll('right')}
-                className="absolute right-0 z-10 bg-slate-700/50 backdrop-blur-sm hover:bg-slate-600/50 text-white rounded-full w-7 h-7 p-0 border border-slate-500/30"
+                className="absolute right-0 z-10 bg-slate-700/80 backdrop-blur-sm hover:bg-slate-600/80 text-white rounded-full w-7 h-7 p-0 border border-slate-500/30 shadow-lg"
               >
                 <ChevronRight className="w-3 h-3" />
               </Button>
