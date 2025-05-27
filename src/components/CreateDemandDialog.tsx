@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -21,7 +22,7 @@ import { Demand } from "@/types/Event";
 interface CreateDemandDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreateDemand: (demandData: Omit<Demand, 'id' | 'completed'>) => void;
+  onCreateDemand: (demandData: Omit<Demand, 'id' | 'completed' | 'completedAt' | 'created_at' | 'updated_at'>) => void;
 }
 
 export const CreateDemandDialog: React.FC<CreateDemandDialogProps> = ({
@@ -32,6 +33,7 @@ export const CreateDemandDialog: React.FC<CreateDemandDialogProps> = ({
   const [title, setTitle] = useState('');
   const [subject, setSubject] = useState('');
   const [date, setDate] = useState<Date>();
+  const [urgency, setUrgency] = useState<'Baixa' | 'Média' | 'Alta'>('Média');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -42,12 +44,14 @@ export const CreateDemandDialog: React.FC<CreateDemandDialogProps> = ({
       title,
       subject,
       date: date.toISOString(),
+      urgency
     });
 
     // Reset form
     setTitle('');
     setSubject('');
     setDate(undefined);
+    setUrgency('Média');
     onOpenChange(false);
   };
 
@@ -86,6 +90,20 @@ export const CreateDemandDialog: React.FC<CreateDemandDialogProps> = ({
               className="bg-white/10 border-white/30 text-white placeholder:text-white/60 min-h-[80px]"
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Urgência</Label>
+            <Select value={urgency} onValueChange={(value: 'Baixa' | 'Média' | 'Alta') => setUrgency(value)}>
+              <SelectTrigger className="bg-white/10 border-white/30 text-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-900 border-white/20 text-white">
+                <SelectItem value="Baixa">Baixa</SelectItem>
+                <SelectItem value="Média">Média</SelectItem>
+                <SelectItem value="Alta">Alta</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
