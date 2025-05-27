@@ -25,9 +25,9 @@ export const DemandCard: React.FC<DemandCardProps> = ({
     const demandDate = new Date(demand.date);
     const tomorrow = addDays(today, 1);
     
-    if (isBefore(demandDate, today)) return 'bg-red-500'; // Atrasada
-    if (isAfter(demandDate, tomorrow)) return 'bg-green-500'; // Para os próximos dias
-    return 'bg-orange-500'; // Em dia
+    if (isBefore(demandDate, today)) return 'bg-red-400'; // Atrasada
+    if (isAfter(demandDate, tomorrow)) return 'bg-green-400'; // Para os próximos dias
+    return 'bg-orange-400'; // Em dia
   };
 
   const handleComplete = () => {
@@ -38,7 +38,7 @@ export const DemandCard: React.FC<DemandCardProps> = ({
   };
 
   return (
-    <div className="bg-white/15 backdrop-blur-md rounded-lg border border-white/30 p-3 min-w-[240px] shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-white/20">
+    <div className="bg-slate-700/40 backdrop-blur-lg rounded-xl border border-slate-600/30 p-3 min-w-[200px] shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-slate-700/50">
       <div className="flex items-start justify-between mb-2">
         <div className={`w-2 h-2 rounded-full ${getStatusColor()}`} />
         <div className="flex gap-1">
@@ -46,7 +46,7 @@ export const DemandCard: React.FC<DemandCardProps> = ({
             size="sm"
             variant="ghost"
             onClick={() => setIsEditOpen(true)}
-            className="h-5 w-5 p-0 text-white/70 hover:text-white hover:bg-white/20"
+            className="h-5 w-5 p-0 text-slate-300 hover:text-white hover:bg-slate-600/50"
           >
             <Edit className="w-3 h-3" />
           </Button>
@@ -54,7 +54,7 @@ export const DemandCard: React.FC<DemandCardProps> = ({
             size="sm"
             variant="ghost"
             onClick={handleComplete}
-            className="h-5 w-5 p-0 text-green-400 hover:text-green-300 hover:bg-white/20"
+            className="h-5 w-5 p-0 text-green-400 hover:text-green-300 hover:bg-slate-600/50"
           >
             <Check className="w-3 h-3" />
           </Button>
@@ -62,7 +62,7 @@ export const DemandCard: React.FC<DemandCardProps> = ({
             size="sm"
             variant="ghost"
             onClick={() => onDeleteDemand(demand.id)}
-            className="h-5 w-5 p-0 text-red-400 hover:text-red-300 hover:bg-white/20"
+            className="h-5 w-5 p-0 text-red-400 hover:text-red-300 hover:bg-slate-600/50"
           >
             <Trash2 className="w-3 h-3" />
           </Button>
@@ -70,9 +70,9 @@ export const DemandCard: React.FC<DemandCardProps> = ({
       </div>
 
       <h3 className="font-medium text-white mb-1 text-xs leading-tight">{demand.title}</h3>
-      <p className="text-white/80 text-xs mb-2 line-clamp-2 leading-tight">{demand.subject}</p>
+      <p className="text-slate-300 text-xs mb-2 line-clamp-2 leading-tight">{demand.subject}</p>
       
-      <div className="text-blue-200 text-xs">
+      <div className="text-blue-300 text-xs">
         {format(new Date(demand.date), "dd/MM/yyyy", { locale: ptBR })}
       </div>
 

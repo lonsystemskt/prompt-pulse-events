@@ -69,76 +69,89 @@ export const EventRow: React.FC<EventRowProps> = ({
   };
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-4 shadow-xl">
-      <div className="flex items-center gap-3 mb-3">
-        <EventOptionsDropdown
-          event={event}
-          onUpdateEvent={onUpdateEvent}
-          onArchiveEvent={onArchiveEvent}
-          onDeleteEvent={onDeleteEvent}
-        />
-        
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          <h2 className="text-lg font-semibold text-white truncate">{event.name}</h2>
-          <span className="text-blue-200 text-xs whitespace-nowrap">
-            {format(new Date(event.date), "dd/MM/yyyy", { locale: ptBR })}
-          </span>
+    <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4">
+      <div className="flex items-center gap-4">
+        {/* Event Info Section */}
+        <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
+          <EventOptionsDropdown
+            event={event}
+            onUpdateEvent={onUpdateEvent}
+            onArchiveEvent={onArchiveEvent}
+            onDeleteEvent={onDeleteEvent}
+          />
+          
+          {event.logo && (
+            <img
+              src={event.logo}
+              alt={event.name}
+              className="w-12 h-12 rounded-lg object-cover shadow-lg"
+            />
+          )}
+          
+          <div className="min-w-0">
+            <h2 className="text-base font-semibold text-white truncate">{event.name}</h2>
+            <span className="text-blue-300 text-xs">
+              {format(new Date(event.date), "dd/MM/yyyy", { locale: ptBR })}
+            </span>
+          </div>
         </div>
 
+        {/* Add Demand Button */}
         <Button
           onClick={() => setIsCreateDemandOpen(true)}
           size="sm"
-          className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-full w-8 h-8 p-0 shadow-lg"
+          className="bg-blue-500/80 hover:bg-blue-600/80 backdrop-blur-sm text-white rounded-full w-8 h-8 p-0 shadow-lg flex-shrink-0 border border-blue-400/30"
         >
           <Plus className="w-4 h-4" />
         </Button>
-      </div>
 
-      <div className="relative">
-        <div className="flex items-center">
-          {canScrollLeft && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => scroll('left')}
-              className="absolute left-0 z-10 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-full w-7 h-7 p-0"
+        {/* Demands Section */}
+        <div className="flex-1 relative">
+          <div className="flex items-center">
+            {canScrollLeft && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => scroll('left')}
+                className="absolute left-0 z-10 bg-slate-700/50 backdrop-blur-sm hover:bg-slate-600/50 text-white rounded-full w-7 h-7 p-0 border border-slate-500/30"
+              >
+                <ChevronLeft className="w-3 h-3" />
+              </Button>
+            )}
+
+            <div
+              ref={setContainerRef}
+              onScroll={(e) => setScrollPosition(e.currentTarget.scrollLeft)}
+              className="flex gap-3 overflow-x-auto scrollbar-hide px-6"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-              <ChevronLeft className="w-3 h-3" />
-            </Button>
-          )}
+              {activeDemands.length === 0 ? (
+                <div className="text-slate-400 text-center py-4 flex-1 text-sm bg-slate-700/30 rounded-xl border border-slate-600/20 backdrop-blur-sm">
+                  Nenhuma demanda
+                </div>
+              ) : (
+                activeDemands.map((demand) => (
+                  <DemandCard
+                    key={demand.id}
+                    demand={demand}
+                    onUpdateDemand={handleUpdateDemand}
+                    onDeleteDemand={handleDeleteDemand}
+                  />
+                ))
+              )}
+            </div>
 
-          <div
-            ref={setContainerRef}
-            onScroll={(e) => setScrollPosition(e.currentTarget.scrollLeft)}
-            className="flex gap-3 overflow-x-auto scrollbar-hide px-6"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {activeDemands.length === 0 ? (
-              <div className="text-white/60 text-center py-6 flex-1 text-sm">
-                Nenhuma demanda criada ainda
-              </div>
-            ) : (
-              activeDemands.map((demand) => (
-                <DemandCard
-                  key={demand.id}
-                  demand={demand}
-                  onUpdateDemand={handleUpdateDemand}
-                  onDeleteDemand={handleDeleteDemand}
-                />
-              ))
+            {canScrollRight && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => scroll('right')}
+                className="absolute right-0 z-10 bg-slate-700/50 backdrop-blur-sm hover:bg-slate-600/50 text-white rounded-full w-7 h-7 p-0 border border-slate-500/30"
+              >
+                <ChevronRight className="w-3 h-3" />
+              </Button>
             )}
           </div>
-
-          {canScrollRight && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => scroll('right')}
-              className="absolute right-0 z-10 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-full w-7 h-7 p-0"
-            >
-              <ChevronRight className="w-3 h-3" />
-            </Button>
-          )}
         </div>
       </div>
 
