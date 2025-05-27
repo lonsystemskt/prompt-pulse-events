@@ -4,12 +4,10 @@ import { Navigation } from "@/components/Navigation";
 import { DemandOverviewCard } from "@/components/DemandOverviewCard";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { Event } from "@/types/Event";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 const Overview = () => {
-  const [events] = useLocalStorage<Event[]>('events', []);
-  const [archivedEvents] = useLocalStorage<Event[]>('archivedEvents', []);
+  const [events, setEvents] = useLocalStorage<Event[]>('events', []);
+  const [archivedEvents, setArchivedEvents] = useLocalStorage<Event[]>('archivedEvents', []);
 
   // Combinar todos os eventos (ativos + arquivados)
   const allEvents = useMemo(() => [...events, ...archivedEvents], [events, archivedEvents]);
@@ -22,23 +20,6 @@ const Overview = () => {
         .map(demand => ({ ...demand, eventName: event.name, eventLogo: event.logo }))
     );
   }, [allEvents]);
-
-  // Dados para o gráfico
-  const chartData = useMemo(() => {
-    const eventDemandCounts = allEvents.map(event => ({
-      name: event.name,
-      demands: event.demands.filter(demand => !demand.completed).length
-    })).filter(item => item.demands > 0);
-
-    return eventDemandCounts;
-  }, [allEvents]);
-
-  const chartConfig = {
-    demands: {
-      label: "Demandas",
-      color: "hsl(var(--chart-1))",
-    },
-  };
 
   const handleUpdateDemand = (demandId: string, updatedDemand: any) => {
     // Encontrar e atualizar a demanda no evento correto
@@ -56,9 +37,6 @@ const Overview = () => {
     };
 
     // Atualizar em ambas as listas
-    const [, setEvents] = useLocalStorage<Event[]>('events', []);
-    const [, setArchivedEvents] = useLocalStorage<Event[]>('archivedEvents', []);
-    
     updateEventDemands(events, setEvents);
     updateEventDemands(archivedEvents, setArchivedEvents);
   };
@@ -77,9 +55,6 @@ const Overview = () => {
     };
 
     // Remover de ambas as listas
-    const [, setEvents] = useLocalStorage<Event[]>('events', []);
-    const [, setArchivedEvents] = useLocalStorage<Event[]>('archivedEvents', []);
-    
     updateEventDemands(events, setEvents);
     updateEventDemands(archivedEvents, setArchivedEvents);
   };
@@ -97,55 +72,8 @@ const Overview = () => {
           <p className="text-cyan-300">Todas as demandas em uma única visualização</p>
         </div>
 
-        {/* Gráfico de Demandas por Evento */}
-        {chartData.length > 0 && (
-          <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-6 mb-6 shadow-2xl">
-            <h2 className="text-2xl font-semibold text-white mb-4">Demandas por Evento</h2>
-            <div className="h-64">
-              <ChartContainer config={chartConfig}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={chartData}>
-                    <XAxis 
-                      dataKey="name" 
-                      tick={{ fill: '#94a3b8', fontSize: 12 }}
-                      axisLine={{ stroke: '#475569' }}
-                    />
-                    <YAxis 
-                      tick={{ fill: '#94a3b8', fontSize: 12 }}
-                      axisLine={{ stroke: '#475569' }}
-                    />
-                    <ChartTooltip 
-                      content={<ChartTooltipContent />}
-                      cursor={{ stroke: '#06b6d4', strokeWidth: 2 }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="demands" 
-                      stroke="#06b6d4"
-                      strokeWidth={3}
-                      dot={{ fill: '#06b6d4', strokeWidth: 2, r: 6 }}
-                      activeDot={{ r: 8, stroke: '#0891b2', strokeWidth: 2 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </div>
-            
-            {/* Resumo numérico */}
-            <div className="mt-4 flex flex-wrap gap-4">
-              {chartData.map((item) => (
-                <div key={item.name} className="bg-slate-700/50 rounded-lg p-3 flex items-center gap-3">
-                  <div className="w-3 h-3 bg-cyan-400 rounded-full"></div>
-                  <span className="text-white font-medium">{item.name}</span>
-                  <span className="text-cyan-300 font-bold">{item.demands}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Lista de Demandas */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           {allActiveDemands.length === 0 ? (
             <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-12 text-center shadow-xl">
               <div className="text-slate-400 text-lg">
