@@ -74,7 +74,7 @@ export type Database = {
           subject: string
           title: string
           updated_at?: string
-          urgency: string
+          urgency?: string
         }
         Update: {
           completed?: boolean

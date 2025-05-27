@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -42,41 +41,40 @@ const Index = () => {
 
   const handleUpdateEvent = async (eventId: string, updatedEvent: Partial<Event>) => {
     try {
+      // Se há demandas para criar, inserir ou atualizar
       if (updatedEvent.demands) {
-        // Atualizar demandas se necessário
-        const existingDemands = await supabase
-          .from('demands')
-          .select('*')
-          .eq('event_id', eventId);
-
-        const currentDemandIds = existingDemands.data?.map(d => d.id) || [];
-        const newDemandIds = updatedEvent.demands.map(d => d.id);
-
-        // Remover demandas que não estão mais na lista
-        const demandsToDelete = currentDemandIds.filter(id => !newDemandIds.includes(id));
-        if (demandsToDelete.length > 0) {
-          await supabase
-            .from('demands')
-            .delete()
-            .in('id', demandsToDelete);
-        }
-
-        // Atualizar ou inserir demandas
         for (const demand of updatedEvent.demands) {
-          const { error } = await supabase
-            .from('demands')
-            .upsert({
-              id: demand.id,
-              event_id: eventId,
-              title: demand.title,
-              subject: demand.subject,
-              date: demand.date,
-              urgency: demand.urgency || 'Média',
-              completed: demand.completed,
-              completed_at: demand.completedAt
-            });
-          
-          if (error) throw error;
+          if (demand.id && demand.id.startsWith('temp-')) {
+            // Nova demanda (id temporário)
+            const { error } = await supabase
+              .from('demands')
+              .insert({
+                event_id: eventId,
+                title: demand.title,
+                subject: demand.subject,
+                date: demand.date,
+                urgency: demand.urgency || 'Média',
+                completed: demand.completed || false,
+                completed_at: demand.completedAt || null
+              });
+            
+            if (error) throw error;
+          } else if (demand.id) {
+            // Demanda existente
+            const { error } = await supabase
+              .from('demands')
+              .update({
+                title: demand.title,
+                subject: demand.subject,
+                date: demand.date,
+                urgency: demand.urgency || 'Média',
+                completed: demand.completed,
+                completed_at: demand.completedAt
+              })
+              .eq('id', demand.id);
+            
+            if (error) throw error;
+          }
         }
       }
 
@@ -117,13 +115,7 @@ const Index = () => {
 
   const handleDeleteEvent = async (eventId: string) => {
     try {
-      // Primeiro deletar todas as demandas do evento
-      await supabase
-        .from('demands')
-        .delete()
-        .eq('event_id', eventId);
-
-      // Depois deletar o evento
+      // Com CASCADE, deletar o evento automaticamente deleta as demandas relacionadas
       const { error } = await supabase
         .from('events')
         .delete()
