@@ -69,8 +69,8 @@ export const EventRow: React.FC<EventRowProps> = ({
   };
 
   return (
-    <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4 w-[220px] h-[80px]">
-      <div className="flex items-center gap-3 h-full">
+    <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4">
+      <div className="flex items-center gap-3">
         {/* Event Options */}
         <EventOptionsDropdown
           event={event}

@@ -86,9 +86,9 @@ const ArchivedEvents = () => {
             archivedEvents.map((event) => (
               <div
                 key={event.id}
-                className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4 w-[220px] h-[80px]"
+                className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4"
               >
-                <div className="flex items-center gap-3 h-full">
+                <div className="flex items-center gap-3">
                   {/* Event Logo and Info */}
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     {event.logo && (

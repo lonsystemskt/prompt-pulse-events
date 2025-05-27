@@ -38,7 +38,7 @@ export const DemandCard: React.FC<DemandCardProps> = ({
   };
 
   return (
-    <div className="bg-slate-700/40 backdrop-blur-lg rounded-xl border border-slate-600/30 p-2 min-w-[140px] shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-slate-700/50 h-[60px]">
+    <div className="bg-slate-700/40 backdrop-blur-lg rounded-xl border border-slate-600/30 p-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-slate-700/50 w-[220px] h-[80px] min-w-[220px]">
       <div className="flex items-start justify-between mb-1">
         <div className={`w-1.5 h-1.5 rounded-full ${getStatusColor()}`} />
         <div className="flex gap-1">
