@@ -33,17 +33,9 @@ export const EventOptionsDropdown: React.FC<EventOptionsDropdownProps> = ({
           <Button
             variant="ghost"
             size="sm"
-            className="text-white/70 hover:text-white hover:bg-white/20 w-8 h-8 p-0"
+            className="text-white/70 hover:text-white hover:bg-white/20 w-8 h-8 p-0 flex-shrink-0"
           >
-            {event.logo ? (
-              <img
-                src={event.logo}
-                alt={event.name}
-                className="w-6 h-6 rounded object-cover"
-              />
-            ) : (
-              <MoreVertical className="w-4 h-4" />
-            )}
+            <MoreVertical className="w-4 h-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="bg-slate-900/95 backdrop-blur-md border-white/20 text-white">

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, RotateCcw, Trash2 } from "lucide-react";
+import { ArrowLeft, RotateCcw, Trash2, Plus, Archive, Check } from "lucide-react";
 import { Event } from "@/types/Event";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -43,45 +43,46 @@ const CompletedDemands = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       <div className="container mx-auto p-4 max-w-7xl">
-        {/* Header - Same height as other pages */}
+        {/* Header - Mesmo layout da página principal */}
         <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-6 mb-6 shadow-2xl h-[120px] flex items-center">
-          <div className="flex items-center gap-4 w-full">
-            <Button
-              onClick={() => navigate('/')}
-              variant="ghost"
-              className="text-white hover:bg-slate-700/50 p-2 transition-all duration-200"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-white mb-2">
-                Demandas Concluídas
-              </h1>
-              <p className="text-blue-300">Gerencie suas demandas concluídas</p>
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-4 flex-1">
+              <Button
+                onClick={() => navigate('/')}
+                variant="ghost"
+                className="text-white hover:bg-slate-700/50 p-2 transition-all duration-200"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <div className="flex-1">
+                <h1 className="text-4xl font-bold text-white mb-2">
+                  Demandas Concluídas
+                </h1>
+                <p className="text-blue-300">Gerencie suas demandas concluídas</p>
+              </div>
+            </div>
+            <div className="flex gap-3 flex-shrink-0">
+              <Button
+                onClick={() => navigate('/')}
+                variant="outline"
+                className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
+              >
+                Dashboard
+              </Button>
+              <Button
+                onClick={() => navigate('/archived-events')}
+                variant="outline"
+                className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
+              >
+                <Archive className="w-4 h-4 mr-2" />
+                Arquivados
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* Navigation - Consistent with other pages */}
-        <div className="flex gap-3 mb-6">
-          <Button
-            onClick={() => navigate('/')}
-            variant="outline"
-            className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
-          >
-            Dashboard
-          </Button>
-          <Button
-            onClick={() => navigate('/archived-events')}
-            variant="outline"
-            className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
-          >
-            Eventos Arquivados
-          </Button>
-        </div>
-
         {/* Completed Demands List */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {eventsWithCompletedDemands.length === 0 ? (
             <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-12 text-center shadow-xl">
               <div className="text-slate-400 text-lg">
@@ -93,7 +94,7 @@ const CompletedDemands = () => {
               const completedDemands = event.demands.filter(demand => demand.completed);
               
               return (
-                <div key={event.id} className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-6 shadow-xl transition-all duration-200 hover:shadow-2xl">
+                <div key={event.id} className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4">
                   <div className="flex items-center gap-3 pb-4 border-b border-slate-600/30 mb-4">
                     {event.logo && (
                       <img

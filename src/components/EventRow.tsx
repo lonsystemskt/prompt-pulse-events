@@ -70,16 +70,17 @@ export const EventRow: React.FC<EventRowProps> = ({
 
   return (
     <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4">
-      <div className="flex items-center gap-4">
-        {/* Event Info Section - Fixed width to prevent layout shifts */}
-        <div className="flex items-center gap-3 min-w-[280px] flex-shrink-0">
-          <EventOptionsDropdown
-            event={event}
-            onUpdateEvent={onUpdateEvent}
-            onArchiveEvent={onArchiveEvent}
-            onDeleteEvent={onDeleteEvent}
-          />
-          
+      <div className="flex items-center gap-3">
+        {/* Event Options */}
+        <EventOptionsDropdown
+          event={event}
+          onUpdateEvent={onUpdateEvent}
+          onArchiveEvent={onArchiveEvent}
+          onDeleteEvent={onDeleteEvent}
+        />
+
+        {/* Event Logo and Info */}
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           {event.logo && (
             <img
               src={event.logo}
@@ -96,7 +97,7 @@ export const EventRow: React.FC<EventRowProps> = ({
           </div>
         </div>
 
-        {/* Add Demand Button - Fixed position */}
+        {/* Add Demand Button */}
         <Button
           onClick={() => setIsCreateDemandOpen(true)}
           size="sm"
