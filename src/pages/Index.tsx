@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { EventRow } from "@/components/EventRow";
@@ -12,6 +12,15 @@ const Index = () => {
   const [events, setEvents] = useLocalStorage<Event[]>('events', []);
   const [archivedEvents, setArchivedEvents] = useLocalStorage<Event[]>('archivedEvents', []);
   const [isCreateEventOpen, setIsCreateEventOpen] = useState(false);
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const handleCreateEvent = (eventData: Omit<Event, 'id' | 'demands'>) => {
     const newEvent: Event = {
@@ -40,11 +49,22 @@ const Index = () => {
     setEvents(events.filter(event => event.id !== eventId));
   };
 
+  const formatDateTime = (date: Date) => {
+    return date.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       <Navigation />
       
-      <div className="container mx-auto p-4 max-w-7xl">
+      <div className="mx-10 p-4 max-w-none">
         {/* Header */}
         <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-6 mb-4 shadow-2xl h-[120px] flex items-center">
           <div className="flex items-center justify-between w-full">
@@ -52,7 +72,7 @@ const Index = () => {
               <h1 className="text-4xl font-bold text-white mb-2">
                 Lon Demandas
               </h1>
-              <p className="text-blue-300">Gerencie seus eventos e demandas</p>
+              <p className="text-blue-300">Desenvolvido por Lon Systems. {formatDateTime(currentDateTime)}</p>
             </div>
           </div>
         </div>
