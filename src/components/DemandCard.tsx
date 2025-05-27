@@ -25,9 +25,9 @@ export const DemandCard: React.FC<DemandCardProps> = ({
     const demandDate = new Date(demand.date);
     const tomorrow = addDays(today, 1);
     
-    if (isBefore(demandDate, today)) return 'bg-red-500 shadow-red-500/30'; // Atrasada
-    if (isAfter(demandDate, tomorrow)) return 'bg-green-500 shadow-green-500/30'; // Para os próximos dias
-    return 'bg-orange-500 shadow-orange-500/30'; // Em dia
+    if (isBefore(demandDate, today)) return 'bg-red-500 shadow-red-500/30';
+    if (isAfter(demandDate, tomorrow)) return 'bg-green-500 shadow-green-500/30';
+    return 'bg-orange-500 shadow-orange-500/30';
   };
 
   const handleComplete = () => {
@@ -38,8 +38,8 @@ export const DemandCard: React.FC<DemandCardProps> = ({
   };
 
   return (
-    <div className="bg-slate-700/50 backdrop-blur-xl rounded-2xl border border-slate-600/40 p-4 shadow-xl hover:shadow-2xl transition-all duration-300 hover:bg-slate-700/60 hover:border-slate-500/50 w-[240px] h-[110px] min-w-[240px] transform hover:scale-105">
-      <div className="flex items-start justify-between mb-2">
+    <div className="bg-slate-700/50 backdrop-blur-xl rounded-2xl border border-slate-600/40 p-4 shadow-xl hover:shadow-2xl transition-all duration-300 hover:bg-slate-700/60 hover:border-slate-500/50 w-[240px] h-[120px] flex flex-col transform hover:scale-105">
+      <div className="flex items-start justify-between mb-3 flex-shrink-0">
         <div className={`w-3 h-3 rounded-full shadow-lg ${getStatusColor()}`} />
         <div className="flex gap-2">
           <Button
@@ -69,10 +69,18 @@ export const DemandCard: React.FC<DemandCardProps> = ({
         </div>
       </div>
 
-      <h3 className="font-semibold text-white mb-2 text-sm leading-tight truncate">{demand.title}</h3>
-      <p className="text-slate-300 text-xs mb-2 line-clamp-2 leading-relaxed">{demand.subject}</p>
+      <div className="flex-1 overflow-hidden">
+        <h3 className="font-semibold text-white mb-2 text-sm leading-tight truncate">{demand.title}</h3>
+        <p className="text-slate-300 text-xs mb-3 overflow-hidden text-ellipsis" style={{ 
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical'
+        }}>
+          {demand.subject}
+        </p>
+      </div>
       
-      <div className="text-blue-300 text-xs font-medium">
+      <div className="text-blue-300 text-xs font-medium flex-shrink-0">
         {format(new Date(demand.date), "dd/MM", { locale: ptBR })}
       </div>
 

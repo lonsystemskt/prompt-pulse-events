@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Plus, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { Event, Demand } from "@/types/Event";
@@ -23,25 +23,39 @@ export const EventRow: React.FC<EventRowProps> = ({
   onDeleteEvent,
 }) => {
   const [isCreateDemandOpen, setIsCreateDemandOpen] = useState(false);
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const activeDemands = event.demands.filter(demand => !demand.completed);
-  const canScrollLeft = scrollPosition > 0;
-  const canScrollRight = containerRef && 
-    containerRef.scrollWidth > containerRef.clientWidth && 
-    scrollPosition < containerRef.scrollWidth - containerRef.clientWidth;
+
+  const checkScrollability = () => {
+    if (!containerRef.current) return;
+    
+    const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+    setCanScrollLeft(scrollLeft > 0);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+  };
+
+  useEffect(() => {
+    checkScrollability();
+    const handleResize = () => checkScrollability();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [activeDemands]);
 
   const scroll = (direction: 'left' | 'right') => {
-    if (!containerRef) return;
+    if (!containerRef.current) return;
     
-    const scrollAmount = 300;
+    const scrollAmount = 260; // Card width + gap
     const newPosition = direction === 'left' 
-      ? Math.max(0, scrollPosition - scrollAmount)
-      : Math.min(containerRef.scrollWidth - containerRef.clientWidth, scrollPosition + scrollAmount);
+      ? containerRef.current.scrollLeft - scrollAmount
+      : containerRef.current.scrollLeft + scrollAmount;
     
-    containerRef.scrollTo({ left: newPosition, behavior: 'smooth' });
-    setScrollPosition(newPosition);
+    containerRef.current.scrollTo({ left: newPosition, behavior: 'smooth' });
+    
+    // Update scroll state after animation
+    setTimeout(checkScrollability, 300);
   };
 
   const handleCreateDemand = (demandData: Omit<Demand, 'id' | 'completed'>) => {
@@ -79,17 +93,17 @@ export const EventRow: React.FC<EventRowProps> = ({
           onDeleteEvent={onDeleteEvent}
         />
 
-        {/* Event Logo and Info - Logo aumentada em 50% */}
-        <div className="flex items-center gap-3">
+        {/* Event Logo and Info */}
+        <div className="flex items-center gap-3 flex-shrink-0">
           {event.logo && (
             <img
               src={event.logo}
               alt={event.name}
-              className="w-12 h-12 rounded-xl object-cover shadow-lg flex-shrink-0 border-2 border-slate-600/30"
+              className="w-12 h-12 rounded-xl object-cover shadow-lg border-2 border-slate-600/30"
             />
           )}
           
-          <div className="w-[80px]">
+          <div className="w-20">
             <h2 className="text-sm font-semibold text-white truncate">{event.name}</h2>
             <span className="text-blue-300 text-xs font-medium">
               {format(new Date(event.date), "dd/MM/yyyy", { locale: ptBR })}
@@ -106,29 +120,31 @@ export const EventRow: React.FC<EventRowProps> = ({
           <Plus className="w-4 h-4" />
         </Button>
 
-        {/* Demands Section with Always Visible Navigation */}
-        <div className="flex-1 relative min-w-0">
+        {/* Demands Section with Scroll */}
+        <div className="flex-1 relative overflow-hidden">
           <div className="flex items-center">
-            {/* Left Arrow - Always Visible */}
+            {/* Left Arrow */}
             <Button
               variant="ghost"
               size="sm"
               onClick={() => scroll('left')}
               disabled={!canScrollLeft}
-              className={`absolute left-0 z-10 bg-slate-700/90 backdrop-blur-sm hover:bg-slate-600/90 text-white rounded-full w-8 h-8 p-0 border border-slate-500/50 shadow-lg transition-all duration-200 ${
-                !canScrollLeft ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'
+              className={`absolute left-0 z-20 bg-slate-700/90 backdrop-blur-sm hover:bg-slate-600/90 text-white rounded-full w-8 h-8 p-0 border border-slate-500/50 shadow-lg transition-all duration-200 ${
+                !canScrollLeft ? 'opacity-30' : 'hover:scale-110'
               }`}
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
 
+            {/* Cards Container */}
             <div
-              ref={setContainerRef}
-              onScroll={(e) => setScrollPosition(e.currentTarget.scrollLeft)}
-              className="flex gap-3 overflow-x-auto scrollbar-hide px-12"
+              ref={containerRef}
+              onScroll={checkScrollability}
+              className="flex gap-3 overflow-x-auto scrollbar-hide px-10 py-2"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {activeDemands.length === 0 ? (
-                <div className="text-slate-400 text-center py-4 flex-1 text-sm bg-slate-700/40 rounded-2xl border border-slate-600/30 backdrop-blur-sm min-w-[160px]">
+                <div className="text-slate-400 text-center py-4 flex-1 text-sm bg-slate-700/40 rounded-2xl border border-slate-600/30 backdrop-blur-sm min-w-[200px] flex-shrink-0">
                   <div className="flex flex-col items-center gap-2">
                     <Calendar className="w-5 h-5 text-slate-500" />
                     <span>Nenhuma demanda</span>
@@ -136,24 +152,25 @@ export const EventRow: React.FC<EventRowProps> = ({
                 </div>
               ) : (
                 activeDemands.map((demand) => (
-                  <DemandCard
-                    key={demand.id}
-                    demand={demand}
-                    onUpdateDemand={handleUpdateDemand}
-                    onDeleteDemand={handleDeleteDemand}
-                  />
+                  <div key={demand.id} className="flex-shrink-0">
+                    <DemandCard
+                      demand={demand}
+                      onUpdateDemand={handleUpdateDemand}
+                      onDeleteDemand={handleDeleteDemand}
+                    />
+                  </div>
                 ))
               )}
             </div>
 
-            {/* Right Arrow - Always Visible */}
+            {/* Right Arrow */}
             <Button
               variant="ghost"
               size="sm"
               onClick={() => scroll('right')}
               disabled={!canScrollRight}
-              className={`absolute right-0 z-10 bg-slate-700/90 backdrop-blur-sm hover:bg-slate-600/90 text-white rounded-full w-8 h-8 p-0 border border-slate-500/50 shadow-lg transition-all duration-200 ${
-                !canScrollRight ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'
+              className={`absolute right-0 z-20 bg-slate-700/90 backdrop-blur-sm hover:bg-slate-600/90 text-white rounded-full w-8 h-8 p-0 border border-slate-500/50 shadow-lg transition-all duration-200 ${
+                !canScrollRight ? 'opacity-30' : 'hover:scale-110'
               }`}
             >
               <ChevronRight className="w-4 h-4" />
