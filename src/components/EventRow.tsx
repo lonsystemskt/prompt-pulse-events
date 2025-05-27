@@ -80,7 +80,7 @@ export const EventRow: React.FC<EventRowProps> = ({
         />
 
         {/* Event Logo and Info */}
-        <div className="flex items-center min-w-0 flex-1" style={{ gap: '40px' }}>
+        <div className="flex items-center gap-2">
           {event.logo && (
             <img
               src={event.logo}
@@ -89,7 +89,7 @@ export const EventRow: React.FC<EventRowProps> = ({
             />
           )}
           
-          <div className="min-w-0 flex-1 w-[100px]">
+          <div className="w-[70px]">
             <h2 className="text-sm font-semibold text-white truncate">{event.name}</h2>
             <span className="text-blue-300 text-xs">
               {format(new Date(event.date), "dd/MM/yyyy", { locale: ptBR })}
