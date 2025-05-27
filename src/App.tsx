@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import ArchivedEvents from "./pages/ArchivedEvents";
 import CRM from "./pages/CRM";
 import Notes from "./pages/Notes";
+import Overview from "./pages/Overview";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/overview" element={<Overview />} />
           <Route path="/crm" element={<CRM />} />
           <Route path="/notes" element={<Notes />} />
           <Route path="/archived-events" element={<ArchivedEvents />} />
