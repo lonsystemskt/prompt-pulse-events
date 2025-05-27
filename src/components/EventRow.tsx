@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { Event, Demand } from "@/types/Event";
 import { DemandCard } from "./DemandCard";
 import { CreateDemandDialog } from "./CreateDemandDialog";
