@@ -45,7 +45,7 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       <div className="container mx-auto p-4 max-w-7xl">
         {/* Header - Fixed height to prevent layout shifts */}
-        <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-6 mb-6 shadow-2xl h-[120px] flex items-center">
+        <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-6 mb-4 shadow-2xl h-[120px] flex items-center">
           <div className="flex items-center justify-between w-full">
             <div className="flex-1">
               <h1 className="text-4xl font-bold text-white mb-2">
@@ -54,6 +54,13 @@ const Index = () => {
               <p className="text-blue-300">Gerencie seus eventos e demandas</p>
             </div>
             <div className="flex gap-3 flex-shrink-0">
+              <Button
+                onClick={() => navigate('/')}
+                variant="outline"
+                className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
+              >
+                Dashboard
+              </Button>
               <Button
                 onClick={() => navigate('/archived-events')}
                 variant="outline"
@@ -70,15 +77,19 @@ const Index = () => {
                 <Check className="w-4 h-4 mr-2" />
                 Concluídas
               </Button>
-              <Button
-                onClick={() => setIsCreateEventOpen(true)}
-                className="bg-blue-500/80 hover:bg-blue-600/80 backdrop-blur-sm text-white shadow-lg border border-blue-400/30 transition-all duration-200"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Novo Evento
-              </Button>
             </div>
           </div>
+        </div>
+
+        {/* Novo Evento Button - Outside menu container */}
+        <div className="mb-6 flex justify-end">
+          <Button
+            onClick={() => setIsCreateEventOpen(true)}
+            className="bg-blue-500/80 hover:bg-blue-600/80 backdrop-blur-sm text-white shadow-lg border border-blue-400/30 transition-all duration-200"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Novo Evento
+          </Button>
         </div>
 
         {/* Events List - Consistent spacing */}

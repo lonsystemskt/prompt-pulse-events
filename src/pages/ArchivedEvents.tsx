@@ -55,6 +55,14 @@ const ArchivedEvents = () => {
                 Dashboard
               </Button>
               <Button
+                onClick={() => navigate('/archived-events')}
+                variant="outline"
+                className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
+              >
+                <Archive className="w-4 h-4 mr-2" />
+                Arquivados
+              </Button>
+              <Button
                 onClick={() => navigate('/completed-demands')}
                 variant="outline"
                 className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
@@ -66,7 +74,7 @@ const ArchivedEvents = () => {
           </div>
         </div>
 
-        {/* Archived Events List - Mesmo estilo dos eventos ativos */}
+        {/* Archived Events List */}
         <div className="space-y-4">
           {archivedEvents.length === 0 ? (
             <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-12 text-center shadow-xl">
@@ -78,45 +86,45 @@ const ArchivedEvents = () => {
             archivedEvents.map((event) => (
               <div
                 key={event.id}
-                className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4"
+                className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4 w-[220px] h-[80px]"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 h-full">
                   {/* Event Logo and Info */}
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     {event.logo && (
                       <img
                         src={event.logo}
                         alt={event.name}
-                        className="w-12 h-12 rounded-lg object-cover shadow-lg flex-shrink-0"
+                        className="w-8 h-8 rounded-lg object-cover shadow-lg flex-shrink-0"
                       />
                     )}
                     
-                    <div className="min-w-0 flex-1">
-                      <h2 className="text-base font-semibold text-white truncate">{event.name}</h2>
+                    <div className="min-w-0 flex-1 w-[100px]">
+                      <h2 className="text-sm font-semibold text-white truncate">{event.name}</h2>
                       <span className="text-blue-300 text-xs">
                         {format(new Date(event.date), "dd/MM/yyyy", { locale: ptBR })}
                       </span>
-                      <p className="text-slate-400 text-xs mt-1">
+                      <p className="text-slate-400 text-xs">
                         {event.demands.length} demanda(s)
                       </p>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-3 flex-shrink-0">
+                  <div className="flex gap-2 flex-shrink-0">
                     <Button
                       onClick={() => handleRestore(event.id)}
-                      className="bg-green-500/80 hover:bg-green-600/80 backdrop-blur-sm border border-green-400/30 transition-all duration-200"
+                      size="sm"
+                      className="bg-green-500/80 hover:bg-green-600/80 backdrop-blur-sm border border-green-400/30 transition-all duration-200 text-xs px-2 py-1"
                     >
-                      <RotateCcw className="w-4 h-4 mr-2" />
-                      Restaurar
+                      <RotateCcw className="w-3 h-3" />
                     </Button>
                     <Button
                       onClick={() => handleDelete(event.id)}
-                      className="bg-red-500/80 hover:bg-red-600/80 backdrop-blur-sm border border-red-400/30 transition-all duration-200"
+                      size="sm"
+                      className="bg-red-500/80 hover:bg-red-600/80 backdrop-blur-sm border border-red-400/30 transition-all duration-200 text-xs px-2 py-1"
                     >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Excluir
+                      <Trash2 className="w-3 h-3" />
                     </Button>
                   </div>
                 </div>

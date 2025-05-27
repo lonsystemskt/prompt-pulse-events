@@ -69,8 +69,8 @@ export const EventRow: React.FC<EventRowProps> = ({
   };
 
   return (
-    <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4">
-      <div className="flex items-center gap-3">
+    <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4 w-[220px] h-[80px]">
+      <div className="flex items-center gap-3 h-full">
         {/* Event Options */}
         <EventOptionsDropdown
           event={event}
@@ -80,17 +80,17 @@ export const EventRow: React.FC<EventRowProps> = ({
         />
 
         {/* Event Logo and Info */}
-        <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="flex items-center min-w-0 flex-1" style={{ gap: '40px' }}>
           {event.logo && (
             <img
               src={event.logo}
               alt={event.name}
-              className="w-12 h-12 rounded-lg object-cover shadow-lg flex-shrink-0"
+              className="w-8 h-8 rounded-lg object-cover shadow-lg flex-shrink-0"
             />
           )}
           
-          <div className="min-w-0 flex-1">
-            <h2 className="text-base font-semibold text-white truncate">{event.name}</h2>
+          <div className="min-w-0 flex-1 w-[100px]">
+            <h2 className="text-sm font-semibold text-white truncate">{event.name}</h2>
             <span className="text-blue-300 text-xs">
               {format(new Date(event.date), "dd/MM/yyyy", { locale: ptBR })}
             </span>
@@ -101,9 +101,9 @@ export const EventRow: React.FC<EventRowProps> = ({
         <Button
           onClick={() => setIsCreateDemandOpen(true)}
           size="sm"
-          className="bg-blue-500/80 hover:bg-blue-600/80 backdrop-blur-sm text-white rounded-full w-8 h-8 p-0 shadow-lg flex-shrink-0 border border-blue-400/30"
+          className="bg-blue-500/80 hover:bg-blue-600/80 backdrop-blur-sm text-white rounded-full w-6 h-6 p-0 shadow-lg flex-shrink-0 border border-blue-400/30"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-3 h-3" />
         </Button>
 
         {/* Demands Section with Navigation */}
@@ -114,19 +114,19 @@ export const EventRow: React.FC<EventRowProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => scroll('left')}
-                className="absolute left-0 z-10 bg-slate-700/80 backdrop-blur-sm hover:bg-slate-600/80 text-white rounded-full w-7 h-7 p-0 border border-slate-500/30 shadow-lg"
+                className="absolute left-0 z-10 bg-slate-700/80 backdrop-blur-sm hover:bg-slate-600/80 text-white rounded-full w-5 h-5 p-0 border border-slate-500/30 shadow-lg"
               >
-                <ChevronLeft className="w-3 h-3" />
+                <ChevronLeft className="w-2 h-2" />
               </Button>
             )}
 
             <div
               ref={setContainerRef}
               onScroll={(e) => setScrollPosition(e.currentTarget.scrollLeft)}
-              className="flex gap-3 overflow-x-auto scrollbar-hide px-6"
+              className="flex gap-2 overflow-x-auto scrollbar-hide px-4"
             >
               {activeDemands.length === 0 ? (
-                <div className="text-slate-400 text-center py-4 flex-1 text-sm bg-slate-700/30 rounded-xl border border-slate-600/20 backdrop-blur-sm min-w-[200px]">
+                <div className="text-slate-400 text-center py-2 flex-1 text-xs bg-slate-700/30 rounded-xl border border-slate-600/20 backdrop-blur-sm min-w-[120px]">
                   Nenhuma demanda
                 </div>
               ) : (
@@ -146,9 +146,9 @@ export const EventRow: React.FC<EventRowProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => scroll('right')}
-                className="absolute right-0 z-10 bg-slate-700/80 backdrop-blur-sm hover:bg-slate-600/80 text-white rounded-full w-7 h-7 p-0 border border-slate-500/30 shadow-lg"
+                className="absolute right-0 z-10 bg-slate-700/80 backdrop-blur-sm hover:bg-slate-600/80 text-white rounded-full w-5 h-5 p-0 border border-slate-500/30 shadow-lg"
               >
-                <ChevronRight className="w-3 h-3" />
+                <ChevronRight className="w-2 h-2" />
               </Button>
             )}
           </div>
