@@ -5,11 +5,12 @@ import { Plus, Edit, Trash2, Phone, Mail } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { CreateContactDialog } from "@/components/CreateContactDialog";
 import { EditContactDialog } from "@/components/EditContactDialog";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useRealtimeCRM } from "@/hooks/useRealtimeCRM";
 import { Contact } from "@/types/CRM";
+import { supabase } from '@/integrations/supabase/client';
 
 const CRM = () => {
-  const [contacts, setContacts] = useLocalStorage<Contact[]>('contacts', []);
+  const { contacts, loading } = useRealtimeCRM();
   const [isCreateContactOpen, setIsCreateContactOpen] = useState(false);
   const [isEditContactOpen, setIsEditContactOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
@@ -23,22 +24,60 @@ const CRM = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleCreateContact = (contactData: Omit<Contact, 'id'>) => {
-    const newContact: Contact = {
-      ...contactData,
-      id: Date.now().toString()
-    };
-    setContacts([...contacts, newContact]);
+  const handleCreateContact = async (contactData: Omit<Contact, 'id'>) => {
+    try {
+      const { error } = await supabase
+        .from('crm_records')
+        .insert([{
+          name: contactData.name,
+          email: contactData.email,
+          contact: contactData.whatsapp,
+          subject: contactData.subject,
+          file: contactData.comments.join(', '),
+          date: new Date().toISOString(),
+          completed: false,
+          status: 'Ativo'
+        }]);
+
+      if (error) throw error;
+      // O realtime irá atualizar automaticamente a lista
+    } catch (error) {
+      console.error('Erro ao criar contato:', error);
+    }
   };
 
-  const handleUpdateContact = (updatedContact: Contact) => {
-    setContacts(contacts.map(contact => 
-      contact.id === updatedContact.id ? updatedContact : contact
-    ));
+  const handleUpdateContact = async (updatedContact: Contact) => {
+    try {
+      const { error } = await supabase
+        .from('crm_records')
+        .update({
+          name: updatedContact.name,
+          email: updatedContact.email,
+          contact: updatedContact.whatsapp,
+          subject: updatedContact.subject,
+          file: updatedContact.comments.join(', ')
+        })
+        .eq('id', updatedContact.id);
+
+      if (error) throw error;
+      // O realtime irá atualizar automaticamente a lista
+    } catch (error) {
+      console.error('Erro ao atualizar contato:', error);
+    }
   };
 
-  const handleDeleteContact = (contactId: string) => {
-    setContacts(contacts.filter(contact => contact.id !== contactId));
+  const handleDeleteContact = async (contactId: string) => {
+    try {
+      const { error } = await supabase
+        .from('crm_records')
+        .delete()
+        .eq('id', contactId);
+
+      if (error) throw error;
+      // O realtime irá atualizar automaticamente a lista
+    } catch (error) {
+      console.error('Erro ao deletar contato:', error);
+    }
   };
 
   const handleEditContact = (contact: Contact) => {
@@ -56,6 +95,14 @@ const CRM = () => {
       second: '2-digit'
     });
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 flex items-center justify-center">
+        <div className="text-white text-lg">Carregando contatos...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900">

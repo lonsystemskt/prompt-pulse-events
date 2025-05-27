@@ -54,6 +54,7 @@ export type Database = {
       demands: {
         Row: {
           completed: boolean
+          completed_at: string | null
           created_at: string
           date: string
           event_id: string
@@ -65,6 +66,7 @@ export type Database = {
         }
         Insert: {
           completed?: boolean
+          completed_at?: string | null
           created_at?: string
           date: string
           event_id: string
@@ -76,6 +78,7 @@ export type Database = {
         }
         Update: {
           completed?: boolean
+          completed_at?: string | null
           created_at?: string
           date?: string
           event_id?: string

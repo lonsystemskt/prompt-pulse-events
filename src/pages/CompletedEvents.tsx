@@ -1,67 +1,61 @@
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Navigation } from "@/components/Navigation";
 import { CompletedEventCard } from "@/components/CompletedEventCard";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { Event } from "@/types/Event";
+import { useRealtimeEvents } from "@/hooks/useRealtimeEvents";
+import { supabase } from '@/integrations/supabase/client';
 
 const CompletedEvents = () => {
-  const [events, setEvents] = useLocalStorage<Event[]>('events', []);
-  const [archivedEvents, setArchivedEvents] = useLocalStorage<Event[]>('archivedEvents', []);
+  const { events, archivedEvents, loading } = useRealtimeEvents();
 
   // Combinar todos os eventos (ativos + arquivados)
-  const allEvents = useMemo(() => [...events, ...archivedEvents], [events, archivedEvents]);
+  const allEvents = [...events, ...archivedEvents];
 
   // Extrair todas as demandas concluídas de todos os eventos
-  const allCompletedDemands = useMemo(() => {
-    return allEvents.flatMap(event => 
-      event.demands
-        .filter(demand => demand.completed)
-        .map(demand => ({ ...demand, eventName: event.name, eventLogo: event.logo }))
+  const allCompletedDemands = allEvents.flatMap(event => 
+    event.demands
+      .filter(demand => demand.completed)
+      .map(demand => ({ ...demand, eventName: event.name, eventLogo: event.logo }))
+  );
+
+  const handleRestoreDemand = async (demandId: string) => {
+    try {
+      const { error } = await supabase
+        .from('demands')
+        .update({ 
+          completed: false,
+          completed_at: null
+        })
+        .eq('id', demandId);
+
+      if (error) throw error;
+      // O realtime irá atualizar automaticamente
+    } catch (error) {
+      console.error('Erro ao restaurar demanda:', error);
+    }
+  };
+
+  const handleDeleteDemand = async (demandId: string) => {
+    try {
+      const { error } = await supabase
+        .from('demands')
+        .delete()
+        .eq('id', demandId);
+
+      if (error) throw error;
+      // O realtime irá atualizar automaticamente
+    } catch (error) {
+      console.error('Erro ao deletar demanda:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 flex items-center justify-center">
+        <div className="text-white text-lg">Carregando demandas concluídas...</div>
+      </div>
     );
-  }, [allEvents]);
-
-  const handleRestoreDemand = (demandId: string) => {
-    // Encontrar e restaurar a demanda no evento correto
-    const updateEventDemands = (eventsList: Event[], setEventsList: (events: Event[]) => void) => {
-      const updatedEvents = eventsList.map(event => {
-        const demandIndex = event.demands.findIndex(d => d.id === demandId);
-        if (demandIndex !== -1) {
-          const updatedDemands = [...event.demands];
-          updatedDemands[demandIndex] = { 
-            ...updatedDemands[demandIndex], 
-            completed: false,
-            completedAt: undefined
-          };
-          return { ...event, demands: updatedDemands };
-        }
-        return event;
-      });
-      setEventsList(updatedEvents);
-    };
-
-    // Restaurar em ambas as listas
-    updateEventDemands(events, setEvents);
-    updateEventDemands(archivedEvents, setArchivedEvents);
-  };
-
-  const handleDeleteDemand = (demandId: string) => {
-    // Encontrar e remover a demanda do evento correto
-    const updateEventDemands = (eventsList: Event[], setEventsList: (events: Event[]) => void) => {
-      const updatedEvents = eventsList.map(event => {
-        const updatedDemands = event.demands.filter(d => d.id !== demandId);
-        if (updatedDemands.length !== event.demands.length) {
-          return { ...event, demands: updatedDemands };
-        }
-        return event;
-      });
-      setEventsList(updatedEvents);
-    };
-
-    // Remover de ambas as listas
-    updateEventDemands(events, setEvents);
-    updateEventDemands(archivedEvents, setArchivedEvents);
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900">

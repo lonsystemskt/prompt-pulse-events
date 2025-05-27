@@ -5,14 +5,14 @@ import { ArrowLeft, RotateCcw, Trash2 } from "lucide-react";
 import { Event } from "@/types/Event";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useRealtimeEvents } from "@/hooks/useRealtimeEvents";
 import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
+import { supabase } from '@/integrations/supabase/client';
 
 const ArchivedEvents = () => {
   const navigate = useNavigate();
-  const [archivedEvents, setArchivedEvents] = useLocalStorage<Event[]>('archivedEvents', []);
-  const [events, setEvents] = useLocalStorage<Event[]>('events', []);
+  const { archivedEvents, loading } = useRealtimeEvents();
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   useEffect(() => {
@@ -23,16 +23,39 @@ const ArchivedEvents = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleRestore = (eventId: string) => {
-    const eventToRestore = archivedEvents.find(event => event.id === eventId);
-    if (eventToRestore) {
-      setEvents([...events, eventToRestore]);
-      setArchivedEvents(archivedEvents.filter(event => event.id !== eventId));
+  const handleRestore = async (eventId: string) => {
+    try {
+      const { error } = await supabase
+        .from('events')
+        .update({ archived: false })
+        .eq('id', eventId);
+
+      if (error) throw error;
+      // O realtime irá atualizar automaticamente
+    } catch (error) {
+      console.error('Erro ao restaurar evento:', error);
     }
   };
 
-  const handleDelete = (eventId: string) => {
-    setArchivedEvents(archivedEvents.filter(event => event.id !== eventId));
+  const handleDelete = async (eventId: string) => {
+    try {
+      // Primeiro deletar todas as demandas do evento
+      await supabase
+        .from('demands')
+        .delete()
+        .eq('event_id', eventId);
+
+      // Depois deletar o evento
+      const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', eventId);
+
+      if (error) throw error;
+      // O realtime irá atualizar automaticamente
+    } catch (error) {
+      console.error('Erro ao deletar evento:', error);
+    }
   };
 
   const formatDateTime = (date: Date) => {
@@ -45,6 +68,14 @@ const ArchivedEvents = () => {
       second: '2-digit'
     });
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 flex items-center justify-center">
+        <div className="text-white text-lg">Carregando eventos arquivados...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900">

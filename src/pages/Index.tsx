@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { EventRow } from "@/components/EventRow";
 import { CreateEventDialog } from "@/components/CreateEventDialog";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useRealtimeEvents } from "@/hooks/useRealtimeEvents";
 import { Event } from "@/types/Event";
 import { Navigation } from "@/components/Navigation";
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
-  const [events, setEvents] = useLocalStorage<Event[]>('events', []);
-  const [archivedEvents, setArchivedEvents] = useLocalStorage<Event[]>('archivedEvents', []);
+  const { events, loading, refetch } = useRealtimeEvents();
   const [isCreateEventOpen, setIsCreateEventOpen] = useState(false);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
@@ -22,31 +22,118 @@ const Index = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleCreateEvent = (eventData: Omit<Event, 'id' | 'demands'>) => {
-    const newEvent: Event = {
-      ...eventData,
-      id: Date.now().toString(),
-      demands: []
-    };
-    setEvents([...events, newEvent]);
-  };
+  const handleCreateEvent = async (eventData: Omit<Event, 'id' | 'demands'>) => {
+    try {
+      const { error } = await supabase
+        .from('events')
+        .insert([{
+          name: eventData.name,
+          logo: eventData.logo,
+          date: eventData.date,
+          archived: false
+        }]);
 
-  const handleUpdateEvent = (eventId: string, updatedEvent: Partial<Event>) => {
-    setEvents(events.map(event => 
-      event.id === eventId ? { ...event, ...updatedEvent } : event
-    ));
-  };
-
-  const handleArchiveEvent = (eventId: string) => {
-    const eventToArchive = events.find(event => event.id === eventId);
-    if (eventToArchive) {
-      setArchivedEvents([...archivedEvents, eventToArchive]);
-      setEvents(events.filter(event => event.id !== eventId));
+      if (error) throw error;
+      // O realtime irá atualizar automaticamente a lista
+    } catch (error) {
+      console.error('Erro ao criar evento:', error);
     }
   };
 
-  const handleDeleteEvent = (eventId: string) => {
-    setEvents(events.filter(event => event.id !== eventId));
+  const handleUpdateEvent = async (eventId: string, updatedEvent: Partial<Event>) => {
+    try {
+      if (updatedEvent.demands) {
+        // Atualizar demandas se necessário
+        const existingDemands = await supabase
+          .from('demands')
+          .select('*')
+          .eq('event_id', eventId);
+
+        const currentDemandIds = existingDemands.data?.map(d => d.id) || [];
+        const newDemandIds = updatedEvent.demands.map(d => d.id);
+
+        // Remover demandas que não estão mais na lista
+        const demandsToDelete = currentDemandIds.filter(id => !newDemandIds.includes(id));
+        if (demandsToDelete.length > 0) {
+          await supabase
+            .from('demands')
+            .delete()
+            .in('id', demandsToDelete);
+        }
+
+        // Atualizar ou inserir demandas
+        for (const demand of updatedEvent.demands) {
+          const { error } = await supabase
+            .from('demands')
+            .upsert({
+              id: demand.id,
+              event_id: eventId,
+              title: demand.title,
+              subject: demand.subject,
+              date: demand.date,
+              urgency: demand.urgency || 'Média',
+              completed: demand.completed,
+              completed_at: demand.completedAt
+            });
+          
+          if (error) throw error;
+        }
+      }
+
+      // Atualizar o evento
+      const eventUpdateData: any = {};
+      if (updatedEvent.name !== undefined) eventUpdateData.name = updatedEvent.name;
+      if (updatedEvent.logo !== undefined) eventUpdateData.logo = updatedEvent.logo;
+      if (updatedEvent.date !== undefined) eventUpdateData.date = updatedEvent.date;
+
+      if (Object.keys(eventUpdateData).length > 0) {
+        const { error } = await supabase
+          .from('events')
+          .update(eventUpdateData)
+          .eq('id', eventId);
+
+        if (error) throw error;
+      }
+      
+      // O realtime irá atualizar automaticamente a lista
+    } catch (error) {
+      console.error('Erro ao atualizar evento:', error);
+    }
+  };
+
+  const handleArchiveEvent = async (eventId: string) => {
+    try {
+      const { error } = await supabase
+        .from('events')
+        .update({ archived: true })
+        .eq('id', eventId);
+
+      if (error) throw error;
+      // O realtime irá atualizar automaticamente a lista
+    } catch (error) {
+      console.error('Erro ao arquivar evento:', error);
+    }
+  };
+
+  const handleDeleteEvent = async (eventId: string) => {
+    try {
+      // Primeiro deletar todas as demandas do evento
+      await supabase
+        .from('demands')
+        .delete()
+        .eq('event_id', eventId);
+
+      // Depois deletar o evento
+      const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', eventId);
+
+      if (error) throw error;
+      // O realtime irá atualizar automaticamente a lista
+    } catch (error) {
+      console.error('Erro ao deletar evento:', error);
+    }
   };
 
   const formatDateTime = (date: Date) => {
@@ -59,6 +146,14 @@ const Index = () => {
       second: '2-digit'
     });
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 flex items-center justify-center">
+        <div className="text-white text-lg">Carregando eventos...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900">

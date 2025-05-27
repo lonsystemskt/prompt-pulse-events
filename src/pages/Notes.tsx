@@ -5,13 +5,14 @@ import { Plus, Edit, Trash2, Calendar, User } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { CreateNoteDialog } from "@/components/CreateNoteDialog";
 import { EditNoteDialog } from "@/components/EditNoteDialog";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useRealtimeNotes } from "@/hooks/useRealtimeNotes";
 import { Note } from "@/types/Note";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { supabase } from '@/integrations/supabase/client';
 
 const Notes = () => {
-  const [notes, setNotes] = useLocalStorage<Note[]>('notes', []);
+  const { notes, loading } = useRealtimeNotes();
   const [isCreateNoteOpen, setIsCreateNoteOpen] = useState(false);
   const [isEditNoteOpen, setIsEditNoteOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
@@ -25,22 +26,55 @@ const Notes = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleCreateNote = (noteData: Omit<Note, 'id'>) => {
-    const newNote: Note = {
-      ...noteData,
-      id: Date.now().toString()
-    };
-    setNotes([...notes, newNote]);
+  const handleCreateNote = async (noteData: Omit<Note, 'id'>) => {
+    try {
+      const { error } = await supabase
+        .from('notes')
+        .insert([{
+          subject: noteData.subject,
+          title: noteData.text,
+          author: noteData.assignee,
+          date: noteData.date
+        }]);
+
+      if (error) throw error;
+      // O realtime irá atualizar automaticamente a lista
+    } catch (error) {
+      console.error('Erro ao criar nota:', error);
+    }
   };
 
-  const handleUpdateNote = (updatedNote: Note) => {
-    setNotes(notes.map(note => 
-      note.id === updatedNote.id ? updatedNote : note
-    ));
+  const handleUpdateNote = async (updatedNote: Note) => {
+    try {
+      const { error } = await supabase
+        .from('notes')
+        .update({
+          subject: updatedNote.subject,
+          title: updatedNote.text,
+          author: updatedNote.assignee,
+          date: updatedNote.date
+        })
+        .eq('id', updatedNote.id);
+
+      if (error) throw error;
+      // O realtime irá atualizar automaticamente a lista
+    } catch (error) {
+      console.error('Erro ao atualizar nota:', error);
+    }
   };
 
-  const handleDeleteNote = (noteId: string) => {
-    setNotes(notes.filter(note => note.id !== noteId));
+  const handleDeleteNote = async (noteId: string) => {
+    try {
+      const { error } = await supabase
+        .from('notes')
+        .delete()
+        .eq('id', noteId);
+
+      if (error) throw error;
+      // O realtime irá atualizar automaticamente a lista
+    } catch (error) {
+      console.error('Erro ao deletar nota:', error);
+    }
   };
 
   const handleEditNote = (note: Note) => {
@@ -58,6 +92,14 @@ const Notes = () => {
       second: '2-digit'
     });
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 flex items-center justify-center">
+        <div className="text-white text-lg">Carregando anotações...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900">
