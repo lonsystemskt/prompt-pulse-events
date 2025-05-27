@@ -59,11 +59,14 @@ export const EventRow: React.FC<EventRowProps> = ({
     containerRef.current.scrollTo({ left: newPosition, behavior: 'smooth' });
   };
 
-  const handleCreateDemand = (demandData: Omit<Demand, 'id' | 'completed'>) => {
+  const handleCreateDemand = (demandData: Omit<Demand, 'id' | 'completed' | 'completedAt' | 'created_at' | 'updated_at'>) => {
+    // Criar uma demanda com ID temporário UUID válido
+    const tempId = `temp-${crypto.randomUUID()}`;
     const newDemand: Demand = {
       ...demandData,
-      id: Date.now().toString(),
-      completed: false
+      id: tempId,
+      completed: false,
+      completedAt: undefined
     };
     
     onUpdateEvent(event.id, {

@@ -31,6 +31,7 @@ export const useRealtimeEvents = () => {
     try {
       setLoading(true);
       
+      // Carregar apenas eventos não arquivados com limite para performance
       const { data: eventsData, error: eventsError } = await supabase
         .from('events')
         .select(`
@@ -38,8 +39,23 @@ export const useRealtimeEvents = () => {
           demands (*)
         `)
         .eq('archived', false)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(50); // Limitar para melhor performance
 
+      if (eventsError) throw eventsError;
+
+      const transformedEvents = transformEvents(eventsData);
+      setEvents(transformedEvents);
+    } catch (error) {
+      console.error('Erro ao carregar eventos:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Função para carregar eventos arquivados apenas quando necessário
+  const loadArchivedEvents = async () => {
+    try {
       const { data: archivedData, error: archivedError } = await supabase
         .from('events')
         .select(`
@@ -47,20 +63,15 @@ export const useRealtimeEvents = () => {
           demands (*)
         `)
         .eq('archived', true)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(50);
 
-      if (eventsError) throw eventsError;
       if (archivedError) throw archivedError;
 
-      const transformedEvents = transformEvents(eventsData);
       const transformedArchived = transformEvents(archivedData);
-
-      setEvents(transformedEvents);
       setArchivedEvents(transformedArchived);
     } catch (error) {
-      console.error('Erro ao carregar eventos:', error);
-    } finally {
-      setLoading(false);
+      console.error('Erro ao carregar eventos arquivados:', error);
     }
   };
 
@@ -76,7 +87,10 @@ export const useRealtimeEvents = () => {
         .eq('id', eventId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao buscar evento específico:', error);
+        return;
+      }
 
       const transformedEvent = transformEvents([data])[0];
 
@@ -97,8 +111,6 @@ export const useRealtimeEvents = () => {
       }
     } catch (error) {
       console.error('Erro ao atualizar evento específico:', error);
-      // Fallback para recarregar tudo se houver erro
-      loadEvents();
     }
   };
 
@@ -121,8 +133,10 @@ export const useRealtimeEvents = () => {
               setArchivedEvents(prev => prev.filter(e => e.id !== deletedId));
             }
           } else if (payload.new && typeof payload.new === 'object' && 'id' in payload.new) {
-            // Atualizar apenas o evento específico que mudou
-            updateSingleEvent(payload.new.id as string);
+            // Pequeno delay para garantir que as demandas foram inseridas
+            setTimeout(() => {
+              updateSingleEvent(payload.new.id as string);
+            }, 100);
           }
         }
       )
@@ -137,7 +151,6 @@ export const useRealtimeEvents = () => {
         (payload) => {
           console.log('Mudança detectada na tabela demands:', payload);
           
-          // Verificar se existe event_id no payload.new ou payload.old
           const eventId = (payload.new && typeof payload.new === 'object' && 'event_id' in payload.new) 
             ? payload.new.event_id as string
             : (payload.old && typeof payload.old === 'object' && 'event_id' in payload.old)
@@ -145,8 +158,10 @@ export const useRealtimeEvents = () => {
             : null;
             
           if (eventId) {
-            // Atualizar apenas o evento que contém a demanda que mudou
-            updateSingleEvent(eventId);
+            // Pequeno delay para garantir consistência
+            setTimeout(() => {
+              updateSingleEvent(eventId);
+            }, 50);
           }
         }
       )
@@ -158,5 +173,11 @@ export const useRealtimeEvents = () => {
     };
   }, []);
 
-  return { events, archivedEvents, loading, refetch: loadEvents };
+  return { 
+    events, 
+    archivedEvents, 
+    loading, 
+    refetch: loadEvents,
+    loadArchivedEvents 
+  };
 };

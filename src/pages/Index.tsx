@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -33,7 +34,7 @@ const Index = () => {
         }]);
 
       if (error) throw error;
-      // O realtime irá atualizar automaticamente a lista
+      console.log('Evento criado com sucesso');
     } catch (error) {
       console.error('Erro ao criar evento:', error);
     }
@@ -41,11 +42,14 @@ const Index = () => {
 
   const handleUpdateEvent = async (eventId: string, updatedEvent: Partial<Event>) => {
     try {
+      console.log('Atualizando evento:', eventId, updatedEvent);
+      
       // Se há demandas para criar, inserir ou atualizar
       if (updatedEvent.demands) {
         for (const demand of updatedEvent.demands) {
           if (demand.id && demand.id.startsWith('temp-')) {
-            // Nova demanda (id temporário)
+            // Nova demanda (id temporário) - inserir no banco
+            console.log('Inserindo nova demanda:', demand);
             const { error } = await supabase
               .from('demands')
               .insert({
@@ -58,9 +62,14 @@ const Index = () => {
                 completed_at: demand.completedAt || null
               });
             
-            if (error) throw error;
-          } else if (demand.id) {
-            // Demanda existente
+            if (error) {
+              console.error('Erro ao inserir demanda:', error);
+              throw error;
+            }
+            console.log('Demanda inserida com sucesso');
+          } else if (demand.id && !demand.id.startsWith('temp-')) {
+            // Demanda existente - atualizar no banco
+            console.log('Atualizando demanda existente:', demand);
             const { error } = await supabase
               .from('demands')
               .update({
@@ -73,12 +82,15 @@ const Index = () => {
               })
               .eq('id', demand.id);
             
-            if (error) throw error;
+            if (error) {
+              console.error('Erro ao atualizar demanda:', error);
+              throw error;
+            }
           }
         }
       }
 
-      // Atualizar o evento
+      // Atualizar o evento se necessário
       const eventUpdateData: any = {};
       if (updatedEvent.name !== undefined) eventUpdateData.name = updatedEvent.name;
       if (updatedEvent.logo !== undefined) eventUpdateData.logo = updatedEvent.logo;
@@ -93,7 +105,6 @@ const Index = () => {
         if (error) throw error;
       }
       
-      // O realtime irá atualizar automaticamente a lista
     } catch (error) {
       console.error('Erro ao atualizar evento:', error);
     }
@@ -107,7 +118,6 @@ const Index = () => {
         .eq('id', eventId);
 
       if (error) throw error;
-      // O realtime irá atualizar automaticamente a lista
     } catch (error) {
       console.error('Erro ao arquivar evento:', error);
     }
@@ -115,14 +125,12 @@ const Index = () => {
 
   const handleDeleteEvent = async (eventId: string) => {
     try {
-      // Com CASCADE, deletar o evento automaticamente deleta as demandas relacionadas
       const { error } = await supabase
         .from('events')
         .delete()
         .eq('id', eventId);
 
       if (error) throw error;
-      // O realtime irá atualizar automaticamente a lista
     } catch (error) {
       console.error('Erro ao deletar evento:', error);
     }
