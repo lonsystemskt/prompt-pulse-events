@@ -1,12 +1,13 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, RotateCcw, Trash2, Plus, Archive, Check } from "lucide-react";
+import { ArrowLeft, RotateCcw, Trash2 } from "lucide-react";
 import { Event } from "@/types/Event";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useNavigate } from "react-router-dom";
+import { Navigation } from "@/components/Navigation";
 
 const ArchivedEvents = () => {
   const navigate = useNavigate();
@@ -27,8 +28,10 @@ const ArchivedEvents = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+      <Navigation />
+      
       <div className="container mx-auto p-4 max-w-7xl">
-        {/* Header - Mesmo layout da página principal */}
+        {/* Header */}
         <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-6 mb-6 shadow-2xl h-[120px] flex items-center">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-4 flex-1">
@@ -45,31 +48,6 @@ const ArchivedEvents = () => {
                 </h1>
                 <p className="text-blue-300">Gerencie seus eventos arquivados</p>
               </div>
-            </div>
-            <div className="flex gap-3 flex-shrink-0">
-              <Button
-                onClick={() => navigate('/')}
-                variant="outline"
-                className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
-              >
-                Dashboard
-              </Button>
-              <Button
-                onClick={() => navigate('/archived-events')}
-                variant="outline"
-                className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
-              >
-                <Archive className="w-4 h-4 mr-2" />
-                Arquivados
-              </Button>
-              <Button
-                onClick={() => navigate('/completed-demands')}
-                variant="outline"
-                className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
-              >
-                <Check className="w-4 h-4 mr-2" />
-                Concluídas
-              </Button>
             </div>
           </div>
         </div>
@@ -95,16 +73,16 @@ const ArchivedEvents = () => {
                       <img
                         src={event.logo}
                         alt={event.name}
-                        className="w-8 h-8 rounded-lg object-cover shadow-lg flex-shrink-0"
+                        className="w-12 h-12 rounded-lg object-cover shadow-lg flex-shrink-0"
                       />
                     )}
                     
                     <div className="min-w-0 flex-1 w-[100px]">
-                      <h2 className="text-sm font-semibold text-white truncate">{event.name}</h2>
-                      <span className="text-blue-300 text-xs">
+                      <h2 className="text-lg font-semibold text-white truncate">{event.name}</h2>
+                      <span className="text-blue-300 text-sm">
                         {format(new Date(event.date), "dd/MM/yyyy", { locale: ptBR })}
                       </span>
-                      <p className="text-slate-400 text-xs">
+                      <p className="text-slate-400 text-sm">
                         {event.demands.length} demanda(s)
                       </p>
                     </div>
@@ -115,16 +93,18 @@ const ArchivedEvents = () => {
                     <Button
                       onClick={() => handleRestore(event.id)}
                       size="sm"
-                      className="bg-green-500/80 hover:bg-green-600/80 backdrop-blur-sm border border-green-400/30 transition-all duration-200 text-xs px-2 py-1"
+                      className="bg-green-500/80 hover:bg-green-600/80 backdrop-blur-sm border border-green-400/30 transition-all duration-200 text-sm px-3 py-2"
                     >
-                      <RotateCcw className="w-3 h-3" />
+                      <RotateCcw className="w-4 h-4 mr-1" />
+                      Restaurar
                     </Button>
                     <Button
                       onClick={() => handleDelete(event.id)}
                       size="sm"
-                      className="bg-red-500/80 hover:bg-red-600/80 backdrop-blur-sm border border-red-400/30 transition-all duration-200 text-xs px-2 py-1"
+                      className="bg-red-500/80 hover:bg-red-600/80 backdrop-blur-sm border border-red-400/30 transition-all duration-200 text-sm px-3 py-2"
                     >
-                      <Trash2 className="w-3 h-3" />
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      Excluir
                     </Button>
                   </div>
                 </div>

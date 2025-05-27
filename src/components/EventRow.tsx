@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { Event, Demand } from "@/types/Event";
@@ -24,24 +24,39 @@ export const EventRow: React.FC<EventRowProps> = ({
 }) => {
   const [isCreateDemandOpen, setIsCreateDemandOpen] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const activeDemands = event.demands.filter(demand => !demand.completed);
-  const canScrollLeft = scrollPosition > 0;
-  const canScrollRight = containerRef && 
-    containerRef.scrollWidth > containerRef.clientWidth && 
-    scrollPosition < containerRef.scrollWidth - containerRef.clientWidth;
+
+  const checkScrollability = () => {
+    if (containerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+      setScrollPosition(scrollLeft);
+    }
+  };
+
+  useEffect(() => {
+    checkScrollability();
+    
+    const handleResize = () => checkScrollability();
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, [activeDemands]);
 
   const scroll = (direction: 'left' | 'right') => {
-    if (!containerRef) return;
+    if (!containerRef.current) return;
     
     const scrollAmount = 300;
     const newPosition = direction === 'left' 
       ? Math.max(0, scrollPosition - scrollAmount)
-      : Math.min(containerRef.scrollWidth - containerRef.clientWidth, scrollPosition + scrollAmount);
+      : Math.min(containerRef.current.scrollWidth - containerRef.current.clientWidth, scrollPosition + scrollAmount);
     
-    containerRef.scrollTo({ left: newPosition, behavior: 'smooth' });
-    setScrollPosition(newPosition);
+    containerRef.current.scrollTo({ left: newPosition, behavior: 'smooth' });
   };
 
   const handleCreateDemand = (demandData: Omit<Demand, 'id' | 'completed'>) => {
@@ -85,7 +100,7 @@ export const EventRow: React.FC<EventRowProps> = ({
             <img
               src={event.logo}
               alt={event.name}
-              className="w-8 h-8 rounded-lg object-cover shadow-lg flex-shrink-0"
+              className="w-12 h-12 rounded-lg object-cover shadow-lg flex-shrink-0"
             />
           )}
           
@@ -121,8 +136,8 @@ export const EventRow: React.FC<EventRowProps> = ({
             )}
 
             <div
-              ref={setContainerRef}
-              onScroll={(e) => setScrollPosition(e.currentTarget.scrollLeft)}
+              ref={containerRef}
+              onScroll={checkScrollability}
               className="flex gap-2 overflow-x-auto scrollbar-hide px-4"
             >
               {activeDemands.length === 0 ? (
