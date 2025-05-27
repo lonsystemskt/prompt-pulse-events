@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Plus, Archive, Check, Calendar } from "lucide-react";
+import { Plus, Archive, Check } from "lucide-react";
 import { EventRow } from "@/components/EventRow";
 import { CreateEventDialog } from "@/components/CreateEventDialog";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -44,67 +44,60 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       <div className="container mx-auto p-4 max-w-7xl">
-        {/* Header Minimalista */}
-        <div className="bg-slate-800/50 backdrop-blur-xl rounded-3xl border border-slate-600/40 p-8 mb-6 shadow-2xl">
+        {/* Header - Fixed height to prevent layout shifts */}
+        <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-6 mb-4 shadow-2xl h-[120px] flex items-center">
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Calendar className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-4xl font-bold text-white mb-1">
-                    Lon Demandas
-                  </h1>
-                  <p className="text-blue-300/80 text-lg">Gerencie suas demandas com eficiência</p>
-                </div>
-              </div>
+            <div className="flex-1">
+              <h1 className="text-4xl font-bold text-white mb-2">
+                Dashboard de Eventos
+              </h1>
+              <p className="text-blue-300">Gerencie seus eventos e demandas</p>
             </div>
-            
-            {/* Menu Minimalista */}
-            <div className="flex items-center gap-3">
+            <div className="flex gap-3 flex-shrink-0">
+              <Button
+                onClick={() => navigate('/')}
+                variant="outline"
+                className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
+              >
+                Dashboard
+              </Button>
               <Button
                 onClick={() => navigate('/archived-events')}
-                variant="ghost"
-                className="text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-xl px-4 py-2 font-medium transition-all duration-200 border border-slate-600/30"
+                variant="outline"
+                className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
               >
                 <Archive className="w-4 h-4 mr-2" />
                 Arquivados
               </Button>
               <Button
                 onClick={() => navigate('/completed-demands')}
-                variant="ghost"
-                className="text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-xl px-4 py-2 font-medium transition-all duration-200 border border-slate-600/30"
+                variant="outline"
+                className="bg-slate-800/40 border-slate-600/30 text-white hover:bg-slate-700/50 backdrop-blur-lg transition-all duration-200"
               >
                 <Check className="w-4 h-4 mr-2" />
                 Concluídas
-              </Button>
-              
-              <Button
-                onClick={() => setIsCreateEventOpen(true)}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg border-0 rounded-2xl px-6 py-2 font-medium transition-all duration-200 transform hover:scale-105"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Novo Evento
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Events List */}
+        {/* Novo Evento Button - Outside menu container */}
+        <div className="mb-6 flex justify-end">
+          <Button
+            onClick={() => setIsCreateEventOpen(true)}
+            className="bg-blue-500/80 hover:bg-blue-600/80 backdrop-blur-sm text-white shadow-lg border border-blue-400/30 transition-all duration-200"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Novo Evento
+          </Button>
+        </div>
+
+        {/* Events List - Consistent spacing */}
         <div className="space-y-4">
           {events.length === 0 ? (
-            <div className="bg-slate-800/40 backdrop-blur-lg rounded-3xl border border-slate-600/30 p-16 text-center shadow-xl">
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-16 h-16 bg-slate-700/50 rounded-2xl flex items-center justify-center">
-                  <Calendar className="w-8 h-8 text-slate-400" />
-                </div>
-                <div className="text-slate-300 text-xl font-medium">
-                  Nenhum evento criado ainda
-                </div>
-                <div className="text-slate-400">
-                  Clique em "Novo Evento" para começar a organizar suas demandas
-                </div>
+            <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-12 text-center shadow-xl">
+              <div className="text-slate-400 text-lg">
+                Nenhum evento criado ainda. Clique em "Novo Evento" para começar.
               </div>
             </div>
           ) : (
@@ -121,6 +114,7 @@ const Index = () => {
         </div>
       </div>
 
+      {/* Dialogs */}
       <CreateEventDialog
         open={isCreateEventOpen}
         onOpenChange={setIsCreateEventOpen}

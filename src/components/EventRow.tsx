@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Plus, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { Event, Demand } from "@/types/Event";
 import { DemandCard } from "./DemandCard";
 import { CreateDemandDialog } from "./CreateDemandDialog";
@@ -23,39 +23,25 @@ export const EventRow: React.FC<EventRowProps> = ({
   onDeleteEvent,
 }) => {
   const [isCreateDemandOpen, setIsCreateDemandOpen] = useState(false);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
 
   const activeDemands = event.demands.filter(demand => !demand.completed);
-
-  const checkScrollability = () => {
-    if (!containerRef.current) return;
-    
-    const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
-    setCanScrollLeft(scrollLeft > 0);
-    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
-  };
-
-  useEffect(() => {
-    checkScrollability();
-    const handleResize = () => checkScrollability();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [activeDemands]);
+  const canScrollLeft = scrollPosition > 0;
+  const canScrollRight = containerRef && 
+    containerRef.scrollWidth > containerRef.clientWidth && 
+    scrollPosition < containerRef.scrollWidth - containerRef.clientWidth;
 
   const scroll = (direction: 'left' | 'right') => {
-    if (!containerRef.current) return;
+    if (!containerRef) return;
     
-    const scrollAmount = 260; // Card width + gap
+    const scrollAmount = 300;
     const newPosition = direction === 'left' 
-      ? containerRef.current.scrollLeft - scrollAmount
-      : containerRef.current.scrollLeft + scrollAmount;
+      ? Math.max(0, scrollPosition - scrollAmount)
+      : Math.min(containerRef.scrollWidth - containerRef.clientWidth, scrollPosition + scrollAmount);
     
-    containerRef.current.scrollTo({ left: newPosition, behavior: 'smooth' });
-    
-    // Update scroll state after animation
-    setTimeout(checkScrollability, 300);
+    containerRef.scrollTo({ left: newPosition, behavior: 'smooth' });
+    setScrollPosition(newPosition);
   };
 
   const handleCreateDemand = (demandData: Omit<Demand, 'id' | 'completed'>) => {
@@ -83,8 +69,8 @@ export const EventRow: React.FC<EventRowProps> = ({
   };
 
   return (
-    <div className="bg-slate-800/50 backdrop-blur-xl rounded-3xl border border-slate-600/40 p-6 shadow-2xl mb-4 transition-all duration-300 hover:shadow-3xl">
-      <div className="flex items-center gap-4">
+    <div className="bg-slate-800/40 backdrop-blur-lg rounded-2xl border border-slate-600/30 p-4 shadow-2xl mb-4">
+      <div className="flex items-center gap-3">
         {/* Event Options */}
         <EventOptionsDropdown
           event={event}
@@ -94,18 +80,18 @@ export const EventRow: React.FC<EventRowProps> = ({
         />
 
         {/* Event Logo and Info */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-2">
           {event.logo && (
             <img
               src={event.logo}
               alt={event.name}
-              className="w-12 h-12 rounded-xl object-cover shadow-lg border-2 border-slate-600/30"
+              className="w-8 h-8 rounded-lg object-cover shadow-lg flex-shrink-0"
             />
           )}
           
-          <div className="w-20">
+          <div className="w-[70px]">
             <h2 className="text-sm font-semibold text-white truncate">{event.name}</h2>
-            <span className="text-blue-300 text-xs font-medium">
+            <span className="text-blue-300 text-xs">
               {format(new Date(event.date), "dd/MM/yyyy", { locale: ptBR })}
             </span>
           </div>
@@ -115,66 +101,56 @@ export const EventRow: React.FC<EventRowProps> = ({
         <Button
           onClick={() => setIsCreateDemandOpen(true)}
           size="sm"
-          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-full w-8 h-8 p-0 shadow-lg flex-shrink-0 border-0 transition-all duration-200 transform hover:scale-110"
+          className="bg-blue-500/80 hover:bg-blue-600/80 backdrop-blur-sm text-white rounded-full w-6 h-6 p-0 shadow-lg flex-shrink-0 border border-blue-400/30"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-3 h-3" />
         </Button>
 
-        {/* Demands Section with Scroll */}
-        <div className="flex-1 relative overflow-hidden">
+        {/* Demands Section with Navigation */}
+        <div className="flex-1 relative min-w-0">
           <div className="flex items-center">
-            {/* Left Arrow */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => scroll('left')}
-              disabled={!canScrollLeft}
-              className={`absolute left-0 z-20 bg-slate-700/90 backdrop-blur-sm hover:bg-slate-600/90 text-white rounded-full w-8 h-8 p-0 border border-slate-500/50 shadow-lg transition-all duration-200 ${
-                !canScrollLeft ? 'opacity-30' : 'hover:scale-110'
-              }`}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
+            {canScrollLeft && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => scroll('left')}
+                className="absolute left-0 z-10 bg-slate-700/80 backdrop-blur-sm hover:bg-slate-600/80 text-white rounded-full w-5 h-5 p-0 border border-slate-500/30 shadow-lg"
+              >
+                <ChevronLeft className="w-2 h-2" />
+              </Button>
+            )}
 
-            {/* Cards Container */}
             <div
-              ref={containerRef}
-              onScroll={checkScrollability}
-              className="flex gap-3 overflow-x-auto scrollbar-hide px-10 py-2"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              ref={setContainerRef}
+              onScroll={(e) => setScrollPosition(e.currentTarget.scrollLeft)}
+              className="flex gap-2 overflow-x-auto scrollbar-hide px-4"
             >
               {activeDemands.length === 0 ? (
-                <div className="text-slate-400 text-center py-4 flex-1 text-sm bg-slate-700/40 rounded-2xl border border-slate-600/30 backdrop-blur-sm min-w-[200px] flex-shrink-0">
-                  <div className="flex flex-col items-center gap-2">
-                    <Calendar className="w-5 h-5 text-slate-500" />
-                    <span>Nenhuma demanda</span>
-                  </div>
+                <div className="text-slate-400 text-center py-2 flex-1 text-xs bg-slate-700/30 rounded-xl border border-slate-600/20 backdrop-blur-sm min-w-[120px]">
+                  Nenhuma demanda
                 </div>
               ) : (
                 activeDemands.map((demand) => (
-                  <div key={demand.id} className="flex-shrink-0">
-                    <DemandCard
-                      demand={demand}
-                      onUpdateDemand={handleUpdateDemand}
-                      onDeleteDemand={handleDeleteDemand}
-                    />
-                  </div>
+                  <DemandCard
+                    key={demand.id}
+                    demand={demand}
+                    onUpdateDemand={handleUpdateDemand}
+                    onDeleteDemand={handleDeleteDemand}
+                  />
                 ))
               )}
             </div>
 
-            {/* Right Arrow */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => scroll('right')}
-              disabled={!canScrollRight}
-              className={`absolute right-0 z-20 bg-slate-700/90 backdrop-blur-sm hover:bg-slate-600/90 text-white rounded-full w-8 h-8 p-0 border border-slate-500/50 shadow-lg transition-all duration-200 ${
-                !canScrollRight ? 'opacity-30' : 'hover:scale-110'
-              }`}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Button>
+            {canScrollRight && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => scroll('right')}
+                className="absolute right-0 z-10 bg-slate-700/80 backdrop-blur-sm hover:bg-slate-600/80 text-white rounded-full w-5 h-5 p-0 border border-slate-500/30 shadow-lg"
+              >
+                <ChevronRight className="w-2 h-2" />
+              </Button>
+            )}
           </div>
         </div>
       </div>
