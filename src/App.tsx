@@ -9,6 +9,7 @@ import ArchivedEvents from "./pages/ArchivedEvents";
 import CRM from "./pages/CRM";
 import Notes from "./pages/Notes";
 import Overview from "./pages/Overview";
+import CompletedEvents from "./pages/CompletedEvents";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/overview" element={<Overview />} />
           <Route path="/crm" element={<CRM />} />
           <Route path="/notes" element={<Notes />} />
+          <Route path="/completed-events" element={<CompletedEvents />} />
           <Route path="/archived-events" element={<ArchivedEvents />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

@@ -88,7 +88,7 @@ const Notes = () => {
         </div>
 
         {/* Notes List */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           {notes.length === 0 ? (
             <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-12 text-center shadow-xl">
               <div className="text-slate-400 text-lg">
@@ -99,52 +99,56 @@ const Notes = () => {
             notes.map((note) => (
               <div
                 key={note.id}
-                className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-4 shadow-2xl mb-4"
+                className="bg-slate-800/40 backdrop-blur-xl rounded-lg border border-slate-600/30 p-3 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-slate-800/50"
               >
-                <div className="flex items-start gap-3">
-                  {/* Note Info */}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-4 mb-2">
-                      <h2 className="text-lg font-semibold text-white">{note.subject}</h2>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-xs px-2 py-1 rounded border ${
-                          note.assignee === 'Thiago' 
-                            ? 'bg-blue-500/20 text-blue-300 border-blue-500/30'
-                            : 'bg-green-500/20 text-green-300 border-green-500/30'
-                        }`}>
-                          <User className="w-3 h-3 inline mr-1" />
-                          {note.assignee}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 text-sm text-cyan-300 mb-3">
-                      <Calendar className="w-4 h-4" />
-                      {format(new Date(note.date), "dd/MM/yyyy", { locale: ptBR })}
-                    </div>
+                <div className="flex items-center gap-3">
+                  {/* Title */}
+                  <div className="w-48 flex-shrink-0">
+                    <h2 className="text-lg font-semibold text-white truncate">{note.subject}</h2>
+                  </div>
 
-                    <div className="text-sm text-slate-300 bg-slate-700/30 rounded-lg p-3 border border-slate-600/30">
+                  {/* Creator */}
+                  <div className="w-20 flex-shrink-0">
+                    <span className={`text-xs px-2 py-1 rounded border ${
+                      note.assignee === 'Thiago' 
+                        ? 'bg-blue-500/20 text-blue-300 border-blue-500/30'
+                        : 'bg-green-500/20 text-green-300 border-green-500/30'
+                    }`}>
+                      <User className="w-3 h-3 inline mr-1" />
+                      {note.assignee}
+                    </span>
+                  </div>
+
+                  {/* Date */}
+                  <div className="w-24 flex-shrink-0 flex items-center gap-1 text-sm text-cyan-300">
+                    <Calendar className="w-4 h-4" />
+                    {format(new Date(note.date), "dd/MM/yyyy", { locale: ptBR })}
+                  </div>
+
+                  {/* Subject with fixed width */}
+                  <div className="flex-1 min-w-0 max-w-md">
+                    <div className="text-sm text-slate-300 bg-slate-700/30 rounded px-3 py-1 border border-slate-600/30 truncate">
                       {note.text}
                     </div>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-2 flex-shrink-0">
+                  <div className="flex gap-1 flex-shrink-0">
                     <Button
                       onClick={() => handleEditNote(note)}
                       size="sm"
-                      className="bg-cyan-500/20 hover:bg-cyan-500/30 backdrop-blur-sm border border-cyan-500/30 transition-all duration-200 text-sm px-3 py-2"
+                      variant="ghost"
+                      className="h-6 w-6 p-0 text-cyan-400 hover:text-cyan-300 hover:bg-slate-600/50"
                     >
-                      <Edit className="w-4 h-4 mr-1" />
-                      Editar
+                      <Edit className="w-3 h-3" />
                     </Button>
                     <Button
                       onClick={() => handleDeleteNote(note.id)}
                       size="sm"
-                      className="bg-red-500/20 hover:bg-red-500/30 backdrop-blur-sm border border-red-500/30 transition-all duration-200 text-sm px-3 py-2 text-red-300"
+                      variant="ghost"
+                      className="h-6 w-6 p-0 text-red-400 hover:text-red-300 hover:bg-slate-600/50"
                     >
-                      <Trash2 className="w-4 h-4 mr-1" />
-                      Excluir
+                      <Trash2 className="w-3 h-3" />
                     </Button>
                   </div>
                 </div>
