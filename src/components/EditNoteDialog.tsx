@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -36,7 +35,7 @@ export const EditNoteDialog = ({
     if (note) {
       setSubject(note.subject);
       setText(note.text);
-      setDate(new Date(note.date));
+      setDate(new Date(note.date)); // Convertendo string para Date para o calendário
       setAssignee(note.assignee);
     }
   }, [note]);
@@ -52,7 +51,7 @@ export const EditNoteDialog = ({
       ...note,
       subject: subject.trim(),
       text: text.trim(),
-      date,
+      date: date.toISOString(), // Convertendo Date para string
       assignee
     });
 

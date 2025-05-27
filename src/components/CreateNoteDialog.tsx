@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -40,7 +39,7 @@ export const CreateNoteDialog = ({
     onCreateNote({
       subject: subject.trim(),
       text: text.trim(),
-      date,
+      date: date.toISOString(), // Convertendo Date para string
       assignee
     });
 
