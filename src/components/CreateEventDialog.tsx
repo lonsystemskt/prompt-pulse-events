@@ -47,6 +47,7 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
     setName('');
     setLogo('');
     setDate(undefined);
+    setIsCalendarOpen(false);
     onOpenChange(false);
   };
 
@@ -63,8 +64,14 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
     console.log('Data selecionada para evento:', selectedDate);
-    setDate(selectedDate);
-    setIsCalendarOpen(false);
+    if (selectedDate) {
+      setDate(selectedDate);
+      setIsCalendarOpen(false);
+    }
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsCalendarOpen(open);
   };
 
   return (
@@ -120,7 +127,7 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
 
           <div className="space-y-2">
             <Label>Data do Evento</Label>
-            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+            <Popover open={isCalendarOpen} onOpenChange={handleOpenChange}>
               <PopoverTrigger asChild>
                 <Button
                   type="button"
@@ -134,21 +141,13 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
                   {date ? format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Selecionar data"}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 bg-slate-800 border-white/20" align="start">
+              <PopoverContent className="w-auto p-0 bg-slate-800 border-white/20 z-50" align="start">
                 <Calendar
                   mode="single"
                   selected={date}
                   onSelect={handleDateSelect}
+                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                   initialFocus
-                  className="p-3"
-                  classNames={{
-                    day_selected: "bg-blue-600 text-white hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white",
-                    day_today: "bg-slate-600 text-white",
-                    day: "text-white hover:bg-slate-600 hover:text-white",
-                    head_cell: "text-slate-300",
-                    caption_label: "text-white",
-                    nav_button: "text-white hover:bg-slate-600",
-                  }}
                 />
               </PopoverContent>
             </Popover>
