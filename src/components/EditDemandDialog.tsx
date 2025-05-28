@@ -122,7 +122,7 @@ export const EditDemandDialog: React.FC<EditDemandDialogProps> = ({
                   selected={date}
                   onSelect={handleDateSelect}
                   initialFocus
-                  className="bg-slate-900 text-white"
+                  className={cn("p-3 pointer-events-auto bg-slate-900 text-white")}
                 />
               </PopoverContent>
             </Popover>
