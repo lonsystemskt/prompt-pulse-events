@@ -62,6 +62,7 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
   };
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
+    console.log('Data selecionada para evento:', selectedDate);
     setDate(selectedDate);
     setIsCalendarOpen(false);
   };
@@ -122,6 +123,7 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
             <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
+                  type="button"
                   variant="outline"
                   className={cn(
                     "w-full justify-start text-left font-normal bg-white/10 border-white/30 text-white hover:bg-white/20",
@@ -132,13 +134,21 @@ export const CreateEventDialog: React.FC<CreateEventDialogProps> = ({
                   {date ? format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Selecionar data"}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 bg-slate-900 border-white/20">
+              <PopoverContent className="w-auto p-0 bg-slate-800 border-white/20" align="start">
                 <Calendar
                   mode="single"
                   selected={date}
                   onSelect={handleDateSelect}
                   initialFocus
-                  className={cn("p-3 pointer-events-auto bg-slate-900 text-white")}
+                  className="p-3"
+                  classNames={{
+                    day_selected: "bg-blue-600 text-white hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white",
+                    day_today: "bg-slate-600 text-white",
+                    day: "text-white hover:bg-slate-600 hover:text-white",
+                    head_cell: "text-slate-300",
+                    caption_label: "text-white",
+                    nav_button: "text-white hover:bg-slate-600",
+                  }}
                 />
               </PopoverContent>
             </Popover>
